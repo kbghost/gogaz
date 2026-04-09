@@ -1,6 +1,15 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: '/api', timeout: 20000 })
+// CORRECTION ICI : Utilisation de l'URL de Render pour la production
+const base_url = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api` 
+  : 'http://localhost:5000/api';
+
+const api = axios.create({ 
+  baseURL: base_url, 
+  timeout: 20000 
+})
+
 const multipart = { headers: { 'Content-Type': 'multipart/form-data' } }
 
 api.interceptors.request.use((config) => {
@@ -8,6 +17,7 @@ api.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
+
 api.interceptors.response.use(
   (res) => res,
   (error) => {
@@ -25,6 +35,7 @@ export const authAPI = {
   login: (d) => api.post('/auth/login', d),
   getMe: () => api.get('/auth/me'),
 }
+
 export const commandeAPI = {
   create: (d) => api.post('/commandes', d),
   getAll: (p) => api.get('/commandes', { params: p }),
@@ -34,6 +45,7 @@ export const commandeAPI = {
   updatePosition: (id, d) => api.put(`/commandes/${id}/position`, d),
   getMesCommandes: () => api.get('/commandes/mes-commandes'),
 }
+
 export const commandeAccAPI = {
   create: (d) => api.post('/commandes-accessoires', d),
   getAll: (p) => api.get('/commandes-accessoires', { params: p }),
@@ -41,6 +53,7 @@ export const commandeAccAPI = {
   getMesCommandes: () => api.get('/commandes-accessoires/mes-commandes'),
   updateStatut: (id, d) => api.put(`/commandes-accessoires/${id}/statut`, d),
 }
+
 export const produitAPI = {
   getAll: (p) => api.get('/produits', { params: p }),
   getOne: (id) => api.get(`/produits/${id}`),
@@ -49,14 +62,17 @@ export const produitAPI = {
   update: (id, fd) => api.put(`/produits/${id}`, fd, multipart),
   delete: (id) => api.delete(`/produits/${id}`),
 }
+
 export const userAPI = {
   getAll: (p) => api.get('/users', { params: p }),
   create: (d) => api.post('/users', d),
   toggle: (id) => api.put(`/users/${id}/toggle`),
 }
+
 export const statsAPI = {
   dashboard: () => api.get('/stats/dashboard'),
 }
+
 export const sliderAPI = {
   getAll: (p) => api.get('/slider', { params: p }),
   create: (fd) => api.post('/slider', fd, multipart),
@@ -64,6 +80,7 @@ export const sliderAPI = {
   delete: (id) => api.delete(`/slider/${id}`),
   reorder: (ordres) => api.put('/slider/reorder', { ordres }),
 }
+
 export const accessoireAPI = {
   getAll: (p) => api.get('/accessoires', { params: p }),
   getOne: (id) => api.get(`/accessoires/${id}`),
@@ -76,7 +93,8 @@ export const accessoireAPI = {
 export const getImageUrl = (path) => {
   if (!path) return null
   if (path.startsWith('http')) return path
-  const base = import.meta.env.VITE_API_URL || 'https://gogaz.onrender.com'
+  const base = import.meta.env.VITE_API_URL || 'http://localhost:5000'
   return `${base}${path}`
 }
+
 export default api
