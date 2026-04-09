@@ -5,9 +5,9 @@ const ThemeContext = createContext()
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem('gz_theme') || 'dark'
+      return localStorage.getItem('gz_theme') || 'light'
     } catch {
-      return 'dark'
+      return 'light'
     }
   })
 
@@ -24,7 +24,7 @@ export function ThemeProvider({ children }) {
   }, [theme])
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+    setTheme(prev => prev === 'light' ? 'dark' : 'light')
   }
 
   const isDark = theme === 'dark'
