@@ -85,27 +85,6 @@ export default function Login() {
               <Link to="/register" style={{ color: '#f97c0a', textDecoration: 'none', fontWeight: 600 }}>S'inscrire</Link>
             </span>
           </div>
-
-          {/* Demo accounts */}
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--c-border)' }}>
-            <p style={{ color: 'var(--c-dim)', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', textAlign: 'center', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Comptes démo</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {[
-                { role: 'Admin', tel: '+22961000000', pwd: 'Admin@123', color: '#f97c0a' },
-                { role: 'Livreur', tel: '+22961000001', pwd: 'Livreur@123', color: '#60a5fa' },
-                { role: 'Client', tel: '+22961000002', pwd: 'Client@123', color: '#34d399' },
-              ].map(d => (
-                <button key={d.role} onClick={() => setForm({ telephone: d.tel, password: d.pwd })} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '10px 14px', borderRadius: '10px', border: 'none',
-                  background: 'var(--c-surface2)', cursor: 'pointer', transition: 'all 0.15s',
-                }}>
-                  <span style={{ color: d.color, fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{d.role}</span>
-                  <span style={{ color: 'var(--c-dim)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>{d.tel}</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
