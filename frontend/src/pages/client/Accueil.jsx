@@ -78,7 +78,7 @@ export default function Accueil() {
       <section style={{ padding: 'clamp(50px,8vw,80px) 20px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '-80px', left: '-100px', width: '450px', height: '450px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(249,124,10,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ textAlign: 'center' }}>
             <div style={{
               opacity: visible ? 1 : 0,
               transform: visible ? 'none' : 'translateY(24px)',
@@ -107,20 +107,6 @@ export default function Accueil() {
                 </Link>
               </div>
             </div>
-            {/* Featured bottle (largest in stock) */}
-            {produits.find(p => p.poids === 12.5) && (
-              <div style={{ display: 'flex', justifyContent: 'center', animation: 'float 3.5s ease-in-out infinite' }}>
-                <ProductImage
-                  imageUrl={produits.find(p => p.poids === 12.5)?.imageUrl}
-                  couleur={marqueColors[produits.find(p => p.poids === 12.5)?.marque] || '#f97c0a'}
-                  poids={12.5}
-                  marque={produits.find(p => p.poids === 12.5)?.marque}
-                  size={160}
-                  objectFit="contain"
-                  style={{ maxWidth: '160px', borderRadius: '16px' }}
-                />
-              </div>
-            )}
           </div>
         </div>
       </section>
