@@ -91,7 +91,7 @@ export default function LivreurCommandes() {
               </div>
             </div>
 
-            {/* Details */}
+           {/* Details */}
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--c-border)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               {[
                 ['Produit', `${c.marque} ${c.poids}kg ×${c.quantite}`],
@@ -106,32 +106,26 @@ export default function LivreurCommandes() {
               ))}
             </div>
 
-            {/* Actions */}
-            <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {c.statut === 'validee' && (
-                <button className="btn-primary" style={{ width: '100%' }}
-                  onClick={() => { updateMut.mutate({ id: c._id, s: 'en_livraison' }); setTrackingId(c._id) }}
-                  disabled={updateMut.isPending}>
-                  🚚 Démarrer la livraison
-                </button>
-              )}
-              {c.statut === 'en_livraison' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  <button className="btn-primary" onClick={() => { updateMut.mutate({ id: c._id, s: 'livree' }); setTrackingId(null) }} disabled={updateMut.isPending}>🎉 Marquer livrée</button>
-                  <button onClick={() => setTrackingId(p => p === c._id ? null : c._id)} style={{ padding: '12px', borderRadius: '14px', border: `1px solid ${trackingId === c._id ? 'rgba(248,113,113,0.3)' : 'rgba(96,165,250,0.3)'}`, background: trackingId === c._id ? 'rgba(248,113,113,0.1)' : 'rgba(96,165,250,0.1)', color: trackingId === c._id ? '#f87171' : '#60a5fa', cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem' }}>
-                    {trackingId === c._id ? '⏹ Stop GPS' : '📍 GPS'}
-                  </button>
+            {/* Historique des statuts */}
+            {c.historiqueStatuts?.length > 0 && (
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--c-border)', background: 'var(--c-surface2)' }}>
+                <div style={{ color: 'var(--c-dim)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                  🕐 Historique
                 </div>
-              )}
-              {c.localisation && (
-                <a href={`https://www.google.com/maps/dir/?api=1&destination=${c.localisation.lat},${c.localisation.lng}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '11px', borderRadius: '14px', border: '1px solid var(--c-border)', color: 'var(--c-muted)', textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem', background: 'var(--c-surface2)' }}>
-                  🗺️ Ouvrir l'itinéraire
-                </a>
-              )}
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {c.historiqueStatuts.slice().reverse().map((h, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '0.9rem', flexShrink: 0 }}>{statutLabel[h.statut]?.icon || '•'}</span>
+                      <div style={{ flex: 1 }}>
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--c-text)', fontSize: '0.78rem' }}>
+                          {statutLabel[h.statut]?.label || h.statut}
+                        </span>
+                        <span style={{ color: 'var(--c-dim)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', marginLeft: '8px' }}>
+                          {new Date(h.date).toLocaleDateString('fr-BJ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
