@@ -39,22 +39,22 @@ function ActionBtn({ onClick, disabled, color, label }) {
 
 export default function AdminCommandes() {
   const qc = useQueryClient()
-  const [tab, setTab] = useState('gaz')          // 'gaz' | 'acc'
+  const [tab, setTab] = useState('gaz')
   const [statut, setStatut] = useState('')
   const [sel, setSel] = useState(null)
 
-  // Gaz orders
   const { data: gazData, isLoading: loadingGaz } = useQuery({
     queryKey: ['cmd-admin-gaz', statut],
     queryFn: () => commandeAPI.getAll(statut ? { statut } : {}),
     refetchInterval: 15000,
   })
-  // Accessories orders
+
   const { data: accData, isLoading: loadingAcc } = useQuery({
     queryKey: ['cmd-admin-acc', statut],
     queryFn: () => commandeAccAPI.getAll(statut ? { statut } : {}),
     refetchInterval: 15000,
   })
+
   const { data: livreursData } = useQuery({
     queryKey: ['livreurs'],
     queryFn: () => userAPI.getAll({ role: 'livreur' }),
@@ -71,6 +71,7 @@ export default function AdminCommandes() {
     onSuccess: () => { qc.invalidateQueries(['cmd-admin-gaz']); toast.success('Mis à jour ✓'); setSel(null) },
     onError: e => toast.error(e.response?.data?.message || 'Erreur'),
   })
+
   const updateAccMut = useMutation({
     mutationFn: ({ id, data }) => commandeAccAPI.updateStatut(id, data),
     onSuccess: () => { qc.invalidateQueries(['cmd-admin-acc']); toast.success('Mis à jour ✓'); setSel(null) },
@@ -83,12 +84,11 @@ export default function AdminCommandes() {
     if (tab === 'gaz') updateGazMut.mutate({ id: sel._id, data: payload })
     else updateAccMut.mutate({ id: sel._id, data: payload })
   }
+
   const isPending = updateGazMut.isPending || updateAccMut.isPending
 
   return (
     <div style={S.wrap} className="animate-fade-in">
-
-      {/* Header */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'10px' }}>
         <h1 style={{ fontFamily:'var(--font-display)', fontWeight:800, fontSize:'clamp(1.3rem,4vw,1.8rem)', color:'var(--c-text)', letterSpacing:'-0.02em' }}>
           Commandes
@@ -107,7 +107,6 @@ export default function AdminCommandes() {
         </div>
       </div>
 
-      {/* Statut filter */}
       <div style={S.tabs}>
         {STATUTS.map(s => (
           <button key={s||'all'} onClick={() => setStatut(s)} style={S.tab(statut===s)}>
@@ -116,23 +115,16 @@ export default function AdminCommandes() {
         ))}
       </div>
 
-      {/* Count */}
       <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontFamily:'var(--font-mono)' }}>
         {commandes.length} résultat(s)
       </div>
 
-      {/* List */}
       {isLoading ? (
         <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
           {Array(3).fill(0).map((_,i) => <div key={i} className="skeleton" style={{ height:'80px', borderRadius:'14px' }} />)}
         </div>
-      ) : commandes.length === 0 ? (
-        <div style={{ ...S.card, padding:'50px', textAlign:'center' }}>
-          <div style={{ fontSize:'2.5rem', marginBottom:'12px' }}>📭</div>
-          <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)' }}>Aucune commande</p>
-        </div>
       ) : (
-        <div style={{ ...S.card }}>
+        <div style={S.card}>
           <div style={{ overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', minWidth:'560px' }}>
               <thead>
@@ -148,31 +140,18 @@ export default function AdminCommandes() {
                     style={{ cursor:'pointer', transition:'background 0.12s' }}
                     onMouseEnter={e => e.currentTarget.style.background='var(--c-surface2)'}
                     onMouseLeave={e => e.currentTarget.style.background=''}>
-                    <td style={S.tCell}>
-                      <span style={{ fontFamily:'var(--font-mono)', color:'var(--c-brand)', fontSize:'0.72rem' }}>{c.numeroCommande}</span>
-                    </td>
+                    <td style={S.tCell}><span style={{ fontFamily:'var(--font-mono)', color:'var(--c-brand)', fontSize:'0.72rem' }}>{c.numeroCommande}</span></td>
                     <td style={S.tCell}>
                       <div style={{ fontFamily:'var(--font-display)', fontWeight:600, color:'var(--c-text)', fontSize:'0.88rem' }}>{c.nomClient}</div>
                       <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.72rem' }}>{c.telephoneClient}</div>
                     </td>
                     <td style={S.tCell}>
-                      {tab==='gaz'
-                        ? <div style={{ color:'var(--c-muted)', fontSize:'0.82rem' }}>{c.marque} {c.poids}kg ×{c.quantite}</div>
-                        : <div style={{ color:'var(--c-muted)', fontSize:'0.8rem' }}>{c.items?.length} article(s)</div>
-                      }
+                      {tab==='gaz' ? `${c.marque} ${c.poids}kg ×${c.quantite}` : `${c.items?.length || 0} article(s)`}
                     </td>
-                    <td style={S.tCell}>
-                      <span style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'0.9rem' }}>{formatPrix(c.prixTotal)}</span>
-                    </td>
-                    <td style={S.tCell}>
-                      <span className={getBadgeClass(c.statut)} style={{ display:'inline-flex', gap:'4px' }}>{statutLabel[c.statut]?.icon} {statutLabel[c.statut]?.label}</span>
-                    </td>
-                    <td style={S.tCell}>
-                      <span style={{ color:'var(--c-dim)', fontSize:'0.75rem', fontFamily:'var(--font-mono)' }}>{formatDateRelative(c.createdAt)}</span>
-                    </td>
-                    <td style={S.tCell}>
-                      <span style={{ color:'var(--c-brand)', fontSize:'0.78rem', fontFamily:'var(--font-display)', fontWeight:700 }}>Gérer →</span>
-                    </td>
+                    <td style={S.tCell}><span style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'0.9rem' }}>{formatPrix(c.prixTotal)}</span></td>
+                    <td style={S.tCell}><span className={getBadgeClass(c.statut)}>{statutLabel[c.statut]?.label}</span></td>
+                    <td style={S.tCell}><span style={{ color:'var(--c-dim)', fontSize:'0.75rem' }}>{formatDateRelative(c.createdAt)}</span></td>
+                    <td style={S.tCell}><span style={{ color:'var(--c-brand)', fontWeight:700 }}>Gérer →</span></td>
                   </tr>
                 ))}
               </tbody>
@@ -181,127 +160,60 @@ export default function AdminCommandes() {
         </div>
       )}
 
-      {/* Detail Modal */}
       {sel && (
         <div style={S.overlay} onClick={e => { if (e.target===e.currentTarget) setSel(null) }}>
           <div style={S.modal}>
             <div style={{ width:'36px', height:'4px', borderRadius:'4px', background:'var(--c-border2)', margin:'0 auto 18px' }} />
-
-            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'16px' }}>
-              <div>
-                <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-brand)', fontSize:'0.72rem', marginBottom:'3px' }}>{sel.numeroCommande}</div>
-                <h3 style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'1.15rem' }}>Gérer la commande</h3>
-              </div>
-              <button onClick={() => setSel(null)} style={{ width:'32px', height:'32px', borderRadius:'50%', background:'var(--c-surface2)', border:'1px solid var(--c-border)', cursor:'pointer', color:'var(--c-muted)', fontSize:'0.85rem' }}>✕</button>
+            
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'16px' }}>
+              <h3 style={{ fontFamily:'var(--font-display)', fontWeight:800 }}>Détails Commande</h3>
+              <button onClick={() => setSel(null)} style={{ border:'none', background:'none', cursor:'pointer' }}>✕</button>
             </div>
 
-            {/* Infos client */}
-            <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'12px', display:'flex', flexDirection:'column', gap:'8px' }}>
-              {[
-                ['Client', sel.nomClient],
-                ['Téléphone', sel.telephoneClient],
-                tab==='gaz'
-                  ? ['Produit', `${sel.marque} ${sel.poids}kg × ${sel.quantite}`]
-                  : ['Articles', `${sel.items?.length} article(s)`],
-                ['Total', formatPrix(sel.prixTotal)],
-                ['Statut', `${statutLabel[sel.statut]?.icon} ${statutLabel[sel.statut]?.label}`],
-                sel.adresseLivraison && ['Adresse', sel.adresseLivraison],
-                sel.livreur && ['Livreur', sel.livreur.nom || sel.livreur],
-              ].filter(Boolean).map(([k,v]) => (
-                <div key={k} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem' }}>
-                  <span style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)' }}>{k}</span>
-                  <span style={{ color:'var(--c-text)', fontFamily:'var(--font-display)', fontWeight:600, textAlign:'right', maxWidth:'60%' }}>{v}</span>
-                </div>
-              ))}
-              {tab==='acc' && sel.items?.map((it, i) => (
-                <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.78rem', paddingTop:'4px', borderTop: i===0?'1px solid var(--c-border)':'none' }}>
-                  <span style={{ color:'var(--c-muted)' }}>🔧 {it.nom} ×{it.quantite}</span>
-                  <span style={{ color:'var(--c-text)', fontWeight:600 }}>{formatPrix(it.prix*it.quantite)}</span>
-                </div>
-              ))}
-              {sel.description && (
-                <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontStyle:'italic', paddingTop:'6px', borderTop:'1px solid var(--c-border)' }}>
-                  💬 {sel.description}
-                </div>
-              )}
+            <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'12px', fontSize:'0.85rem' }}>
+               <p><strong>Client:</strong> {sel.nomClient}</p>
+               <p><strong>Tel:</strong> {sel.telephoneClient}</p>
+               <p><strong>Total:</strong> {formatPrix(sel.prixTotal)}</p>
+               {sel.adresseLivraison && <p><strong>Adresse:</strong> {sel.adresseLivraison}</p>}
             </div>
 
-            {/* Coordonnées GPS + itinéraire */}
-            {sel.localisation && (
-              <div style={{ background:'rgba(96,165,250,0.06)', border:'1px solid rgba(96,165,250,0.2)', borderRadius:'14px', padding:'14px', marginBottom:'12px' }}>
-                <div style={{ fontFamily:'var(--font-mono)', color:'#60a5fa', fontSize:'0.68rem', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'8px' }}>
-                  📍 Point de livraison
-                </div>
-                <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.75rem', marginBottom:'10px' }}>
-                  {sel.localisation.lat?.toFixed(6)}, {sel.localisation.lng?.toFixed(6)}
-                </div>
-                
-                <a href={`https://www.google.com/maps/dir/?api=1&destination=${sel.localisation.lat},${sel.localisation.lng}`}
-                  target="_blank"
+            {/* SECTION ITINÉRAIRE GPS */}
+            {sel.localisation?.lat && (
+              <div style={{ background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.2)', borderRadius:'14px', padding:'14px', marginBottom:'12px' }}>
+                <div style={{ color:'#60a5fa', fontSize:'0.7rem', fontWeight:700, marginBottom:'8px' }}>📍 LOCALISATION CLIENT</div>
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${sel.localisation.lat},${sel.localisation.lng}`}
+                  target="_blank" 
                   rel="noreferrer"
-                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'11px', borderRadius:'10px', background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:700, fontSize:'0.85rem' }}
+                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'12px', borderRadius:'10px', background:'#60a5fa', color:'#fff', textDecoration:'none', fontWeight:700 }}
                 >
-                  🗺️ Ouvrir l'itinéraire Google Maps
-                </a>
-                <a
-                  href={`https://www.google.com/maps?q=${sel.localisation.lat},${sel.localisation.lng}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'10px', borderRadius:'10px', background:'transparent', border:'1px solid var(--c-border)', color:'var(--c-muted)', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:600, fontSize:'0.82rem', marginTop:'6px' }}
-                >
-                  📌 Voir sur la carte
+                  🚗 Lancer l'itinéraire (Maps)
                 </a>
               </div>
             )}
 
-            {/* Historique des statuts */}
-            {sel.historiqueStatuts?.length > 0 && (
-              <div style={{ background:'var(--c-surface2)', borderRadius:'14px', padding:'14px', marginBottom:'12px' }}>
-                <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.68rem', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'10px' }}>
-                  🕐 Historique
-                </div>
-                <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
-                  {sel.historiqueStatuts.slice().reverse().map((h, i) => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                      <span style={{ fontSize:'1rem', flexShrink:0 }}>{statutLabel[h.statut]?.icon || '•'}</span>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontFamily:'var(--font-display)', fontWeight:600, color:'var(--c-text)', fontSize:'0.83rem' }}>
-                          {statutLabel[h.statut]?.label || h.statut}
-                        </div>
-                        <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-dim)', fontSize:'0.7rem' }}>
-                          {new Date(h.date).toLocaleDateString('fr-BJ', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div>
+            {/* ACTIONS */}
+            <div style={{ marginTop:'12px' }}>
               {sel.statut === 'en_attente' && (
                 <ActionBtn onClick={() => handleStatut('validee')} disabled={isPending} color="green" label="✅ Valider la commande" />
               )}
               {sel.statut === 'validee' && (
                 <>
-                  <select id="lv-sel" defaultValue="" style={{ width:'100%', padding:'12px 14px', borderRadius:'12px', border:'1px solid var(--c-border2)', background:'var(--c-surface2)', color:'var(--c-text)', fontFamily:'var(--font-body)', fontSize:'14px', outline:'none', marginBottom:'8px' }}>
-                    <option value="">Assigner un livreur (optionnel)</option>
-                    {livreurs.map(l => <option key={l._id} value={l._id}>{l.nom} — {l.telephone}</option>)}
+                  <select id="lv-sel" style={{ width:'100%', padding:'12px', borderRadius:'12px', marginBottom:'8px' }}>
+                    <option value="">Assigner un livreur...</option>
+                    {livreurs.map(l => <option key={l._id} value={l._id}>{l.nom}</option>)}
                   </select>
-                  <ActionBtn onClick={() => { const lv = document.getElementById('lv-sel')?.value || undefined; handleStatut('en_livraison', lv) }} disabled={isPending} color="orange" label="🚚 Démarrer la livraison" />
+                  <ActionBtn onClick={() => handleStatut('en_livraison', document.getElementById('lv-sel').value)} disabled={isPending} color="orange" label="🚚 Envoyer en livraison" />
                 </>
               )}
               {sel.statut === 'en_livraison' && (
                 <ActionBtn onClick={() => handleStatut('livree')} disabled={isPending} color="green" label="🎉 Marquer comme livrée" />
               )}
               {!['livree','annulee'].includes(sel.statut) && (
-                <ActionBtn onClick={() => handleStatut('annulee')} disabled={isPending} color="red" label="❌ Annuler la commande" />
+                <ActionBtn onClick={() => handleStatut('annulee')} disabled={isPending} color="red" label="❌ Annuler" />
               )}
             </div>
           </div>
-        </div>
-      )}
         </div>
       )}
     </div>
