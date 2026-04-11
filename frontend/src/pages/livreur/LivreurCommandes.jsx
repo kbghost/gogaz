@@ -34,7 +34,7 @@ export default function LivreurCommandes() {
       qc.invalidateQueries(['lv-gaz-all'])
       toast.success('Statut mis à jour ✓')
       
-      // Activer le tracking si on passe en livraison, l'arrêter sinon
+      // Activer le tracking si on passe en livraison, sinon on l'arrête
       if (variables.s === 'en_livraison') {
         setTrackingId(variables.id)
       } else if (trackingId === variables.id) {
@@ -48,20 +48,19 @@ export default function LivreurCommandes() {
     if (!trackingId) return
     
     const interval = setInterval(() => {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            const { latitude, longitude } = pos.coords
-            updatePosition(trackingId, latitude, longitude)
-            commandeAPI.updatePosition(trackingId, { lat: latitude, lng: longitude })
-          },
-          err => console.error("Erreur GPS:", err),
-          { enableHighAccuracy: true }
-        )
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords
+          // Envoi via Socket pour le temps réel (Admin)
+          updatePosition(trackingId, latitude, longitude)
+          // Mise à jour API pour l'historique
+          commandeAPI.updatePosition(trackingId, { lat: latitude, lng: longitude })
+        })
       }
     }, 10000)
 
     toast.success('📍 GPS actif', { id: 'gps' })
+    
     return () => { 
       clearInterval(interval)
       toast.dismiss('gps')
@@ -73,7 +72,7 @@ export default function LivreurCommandes() {
       <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', color: 'var(--c-text)' }}>Commandes gaz ⛽</h1>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
         {TABS.map(t => (
           <button key={t.val} onClick={() => setStatut(t.val)} style={{
             flexShrink: 0, padding: '8px 14px', borderRadius: '99px', border: 'none', cursor: 'pointer',
@@ -81,7 +80,6 @@ export default function LivreurCommandes() {
             color: statut === t.val ? '#fff' : 'var(--c-muted)',
             fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.8rem',
             boxShadow: statut === t.val ? '0 0 12px rgba(249,124,10,0.3)' : 'none',
-            transition: 'all 0.2s'
           }}>
             {t.icon} {t.label}
           </button>
@@ -100,7 +98,8 @@ export default function LivreurCommandes() {
       {commandes.map(c => {
         const color = marqueColors[c.marque] || '#f97c0a'
         return (
-          <div key={c._id} style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', borderRadius: '18px', overflow: 'hidden', marginBottom: '10px' }}>
+          <div key={c._id} style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', borderRadius: '18px', overflow: 'hidden', marginBottom: '8px' }}>
+            
             {/* Header */}
             <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--c-border)', display: 'flex', alignItems: 'center', gap: '12px', background: `${color}08` }}>
               <ProductImage imageUrl={c.produit?.imageUrl} couleur={color} poids={c.poids} marque={c.marque} size={44} objectFit="contain" />
@@ -110,9 +109,7 @@ export default function LivreurCommandes() {
                 <div style={{ color: 'var(--c-muted)', fontSize: '0.78rem', fontFamily: 'var(--font-mono)' }}>{c.telephoneClient}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span className={getBadgeClass(c.statut)} style={{ display: 'inline-flex', marginBottom: '4px' }}>
-                  {statutLabel[c.statut]?.icon} {statutLabel[c.statut]?.label}
-                </span>
+                <span className={getBadgeClass(c.statut)} style={{ display: 'inline-flex', marginBottom: '4px' }}>{statutLabel[c.statut]?.icon} {statutLabel[c.statut]?.label}</span>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color, fontSize: '1rem' }}>{formatPrix(c.prixTotal)}</div>
               </div>
             </div>
@@ -132,24 +129,22 @@ export default function LivreurCommandes() {
               ))}
             </div>
 
-            {/* Actions */}
-            <div style={{ padding: '12px 16px', display: 'flex', gap: '8px' }}>
+            {/* Actions (Indispensable pour faire avancer la commande) */}
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--c-border)', display: 'flex', gap: '10px' }}>
               {c.statut === 'validee' && (
                 <button 
                   onClick={() => updateMut.mutate({ id: c._id, s: 'en_livraison' })}
-                  disabled={updateMut.isPending}
-                  style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'var(--c-brand)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--c-brand)', color: 'white', fontWeight: 700, cursor: 'pointer' }}
                 >
-                  Démarrer la livraison 🚚
+                  🚚 Démarrer la livraison
                 </button>
               )}
               {c.statut === 'en_livraison' && (
                 <button 
                   onClick={() => updateMut.mutate({ id: c._id, s: 'livree' })}
-                  disabled={updateMut.isPending}
-                  style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: '#10b981', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: '#10b981', color: 'white', fontWeight: 700, cursor: 'pointer' }}
                 >
-                  Confirmer la livraison 🎉
+                  🎉 Marquer comme livrée
                 </button>
               )}
             </div>
@@ -166,20 +161,4 @@ export default function LivreurCommandes() {
                       <span style={{ fontSize: '0.9rem' }}>{statutLabel[h.statut]?.icon || '•'}</span>
                       <div style={{ flex: 1 }}>
                         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--c-text)', fontSize: '0.78rem' }}>
-                          {statutLabel[h.statut]?.label || h.statut}
-                        </span>
-                        <span style={{ color: 'var(--c-dim)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', marginLeft: '8px' }}>
-                          {new Date(h.date).toLocaleDateString('fr-BJ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+                          {
