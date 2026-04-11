@@ -195,20 +195,22 @@ export default function AdminCommandes() {
               <button onClick={() => setSel(null)} style={{ width:'32px', height:'32px', borderRadius:'50%', background:'var(--c-surface2)', border:'1px solid var(--c-border)', cursor:'pointer', color:'var(--c-muted)', fontSize:'0.85rem' }}>✕</button>
             </div>
 
-            {/* Infos */}
-            <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'16px', display:'flex', flexDirection:'column', gap:'8px' }}>
+            {/* Infos client */}
+            <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'12px', display:'flex', flexDirection:'column', gap:'8px' }}>
               {[
                 ['Client', sel.nomClient],
-                ['Tél.', sel.telephoneClient],
+                ['Téléphone', sel.telephoneClient],
                 tab==='gaz'
                   ? ['Produit', `${sel.marque} ${sel.poids}kg × ${sel.quantite}`]
                   : ['Articles', `${sel.items?.length} article(s)`],
                 ['Total', formatPrix(sel.prixTotal)],
                 ['Statut', `${statutLabel[sel.statut]?.icon} ${statutLabel[sel.statut]?.label}`],
+                sel.adresseLivraison && ['Adresse', sel.adresseLivraison],
+                sel.livreur && ['Livreur', sel.livreur.nom || sel.livreur],
               ].filter(Boolean).map(([k,v]) => (
                 <div key={k} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem' }}>
                   <span style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)' }}>{k}</span>
-                  <span style={{ color:'var(--c-text)', fontFamily:'var(--font-display)', fontWeight:600 }}>{v}</span>
+                  <span style={{ color:'var(--c-text)', fontFamily:'var(--font-display)', fontWeight:600, textAlign:'right', maxWidth:'60%' }}>{v}</span>
                 </div>
               ))}
               {tab==='acc' && sel.items?.map((it, i) => (
@@ -217,9 +219,64 @@ export default function AdminCommandes() {
                   <span style={{ color:'var(--c-text)', fontWeight:600 }}>{formatPrix(it.prix*it.quantite)}</span>
                 </div>
               ))}
-              {sel.description && <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontStyle:'italic', paddingTop:'6px' }}>💬 {sel.description}</div>}
-              {sel.adresseLivraison && <div style={{ color:'var(--c-muted)', fontSize:'0.78rem' }}>📍 {sel.adresseLivraison}</div>}
+              {sel.description && (
+                <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontStyle:'italic', paddingTop:'6px', borderTop:'1px solid var(--c-border)' }}>
+                  💬 {sel.description}
+                </div>
+              )}
             </div>
+
+            {/* Coordonnées GPS + itinéraire */}
+            {sel.localisation && (
+              <div style={{ background:'rgba(96,165,250,0.06)', border:'1px solid rgba(96,165,250,0.2)', borderRadius:'14px', padding:'14px', marginBottom:'12px' }}>
+                <div style={{ fontFamily:'var(--font-mono)', color:'#60a5fa', fontSize:'0.68rem', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'8px' }}>
+                  📍 Point de livraison
+                </div>
+                <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.75rem', marginBottom:'10px' }}>
+                  {sel.localisation.lat?.toFixed(6)}, {sel.localisation.lng?.toFixed(6)}
+                </div>
+                
+                <a href={`https://www.google.com/maps/dir/?api=1&destination=${sel.localisation.lat},${sel.localisation.lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'11px', borderRadius:'10px', background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:700, fontSize:'0.85rem' }}
+                >
+                  🗺️ Ouvrir l'itinéraire Google Maps
+                </a>
+                <a
+                  href={`https://www.google.com/maps?q=${sel.localisation.lat},${sel.localisation.lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'10px', borderRadius:'10px', background:'transparent', border:'1px solid var(--c-border)', color:'var(--c-muted)', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:600, fontSize:'0.82rem', marginTop:'6px' }}
+                >
+                  📌 Voir sur la carte
+                </a>
+              </div>
+            )}
+
+            {/* Historique des statuts */}
+            {sel.historiqueStatuts?.length > 0 && (
+              <div style={{ background:'var(--c-surface2)', borderRadius:'14px', padding:'14px', marginBottom:'12px' }}>
+                <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.68rem', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'10px' }}>
+                  🕐 Historique
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+                  {sel.historiqueStatuts.slice().reverse().map((h, i) => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <span style={{ fontSize:'1rem', flexShrink:0 }}>{statutLabel[h.statut]?.icon || '•'}</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontFamily:'var(--font-display)', fontWeight:600, color:'var(--c-text)', fontSize:'0.83rem' }}>
+                          {statutLabel[h.statut]?.label || h.statut}
+                        </div>
+                        <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-dim)', fontSize:'0.7rem' }}>
+                          {new Date(h.date).toLocaleDateString('fr-BJ', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Actions */}
             <div>
@@ -243,6 +300,8 @@ export default function AdminCommandes() {
               )}
             </div>
           </div>
+        </div>
+      )}
         </div>
       )}
     </div>
