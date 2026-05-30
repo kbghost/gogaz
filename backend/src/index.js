@@ -14,7 +14,7 @@ const app    = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || 'https://gogaz.vercel.app', methods: ['GET','POST'], credentials: true },
+  cors: { origin: process.env.CLIENT_URL || 'https://gogaznow.com', methods: ['GET','POST'], credentials: true },
 });
 app.set('io', io);
 
@@ -22,7 +22,7 @@ connectDB();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentSecurityPolicy: false }));
 app.use(morgan('dev'));
-app.use(cors({ origin: process.env.CLIENT_URL || 'https://gogaz.vercel.app', credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || 'https://gogaznow.com', credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
