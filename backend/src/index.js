@@ -33,6 +33,27 @@ app.use('/uploads', express.static(uploadsDir, {
   setHeaders: (res) => res.set('Cross-Origin-Resource-Policy', 'cross-origin'),
 }));
 
+
+const allowedOrigins = [
+  'https://gogaz.vercel.app',
+  'https://gogaznow.com',
+  'https://www.gogaznow.com' // Ajoute aussi la version avec www
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Permet les requêtes sans origine (comme les outils Postman ou mobiles)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Bloqué par CORS : Origine non autorisée'));
+    }
+  },
+  credentials: true
+}));
+
 // Ensure upload dirs exist
 const fs = require('fs');
 ['produits','slider','accessoires'].forEach(d => {
