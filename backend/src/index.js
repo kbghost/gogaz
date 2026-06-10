@@ -9,6 +9,7 @@ const morgan     = require('morgan');
 const rateLimit  = require('express-rate-limit');
 const connectDB  = require('./config/db');
 const socketHandler = require('./socket/socketHandler');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app    = express();
 const server = http.createServer(app);
@@ -91,4 +92,6 @@ server.listen(PORT, () => {
   console.log(`📁 Uploads: ${uploadsDir}`);
 });
 
+
+app.use('/api/notifications', notificationRoutes);
 module.exports = { app, io };
