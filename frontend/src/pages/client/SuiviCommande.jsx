@@ -7,6 +7,7 @@ import { commandeAPI } from '../../services/api'
 import { formatPrix, formatDate, formatDateRelative, statutLabel, getBadgeClass, marqueColors } from '../../utils/helpers'
 import { useSocket } from '../../context/SocketContext'
 import toast from 'react-hot-toast'
+import PushNotifier from '../../components/PushNotifier';
 
 const STEPS = ['en_attente', 'validee', 'en_livraison', 'livree']
 
@@ -83,6 +84,8 @@ export default function SuiviCommande() {
         )}
 
         {commande && (
+            <>
+              <PushNotifier orderId={commande._id} />
           <div style={{ display:'flex', flexDirection:'column', gap:'14px' }} className="animate-slide-up">
 
             {/* Header card */}
