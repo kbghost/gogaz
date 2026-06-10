@@ -84,103 +84,104 @@ export default function SuiviCommande() {
         )}
 
         {commande && (
-            <>
-              <PushNotifier orderId={commande._id} />
-          <div style={{ display:'flex', flexDirection:'column', gap:'14px' }} className="animate-slide-up">
+          <>
+            <PushNotifier orderId={commande._id} />
+            <div style={{ display:'flex', flexDirection:'column', gap:'14px' }} className="animate-slide-up">
 
-            {/* Header card */}
-            <div style={{ background:'var(--c-surface)', border:`1px solid ${color}30`, borderRadius:'18px', padding:'20px' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
-                <ProductImage imageUrl={commande.produit?.imageUrl} couleur={color} poids={commande.poids} marque={commande.marque} size={60} objectFit="contain" />
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-brand)', fontSize:'0.7rem', marginBottom:'2px' }}>{commande.numeroCommande}</div>
-                  <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'1.05rem' }}>{commande.marque} · {commande.poids}kg × {commande.quantite}</div>
-                  <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontFamily:'var(--font-body)', marginTop:'2px' }}>{formatDateRelative(commande.createdAt)}</div>
-                </div>
-                <div style={{ textAlign:'right', flexShrink:0 }}>
-                  <span className={getBadgeClass(commande.statut)} style={{ display:'inline-flex' }}>{statutLabel[commande.statut]?.icon} {statutLabel[commande.statut]?.label}</span>
-                  <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'1.3rem', marginTop:'6px' }}>{formatPrix(commande.prixTotal)}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress */}
-            {commande.statut !== 'annulee' && (
-              <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'20px' }}>
-                <h3 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.9rem', marginBottom:'20px' }}>Progression</h3>
-                <div style={{ display:'flex', alignItems:'center' }}>
-                  {STEPS.map((s, i) => {
-                    const done   = currentStep > i
-                    const active = currentStep === i
-                    return (
-                      <div key={s} style={{ display:'flex', alignItems:'center', flex: i < STEPS.length-1 ? 1 : 0 }}>
-                        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'6px' }}>
-                          <div style={{
-                            width:'38px', height:'38px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem', transition:'all 0.3s',
-                            background: done ? 'rgba(52,211,153,0.15)' : active ? 'rgba(249,124,10,0.15)' : 'var(--c-surface2)',
-                            border: `2px solid ${done ? '#34d399' : active ? 'var(--c-brand)' : 'var(--c-border2)'}`,
-                            boxShadow: active ? '0 0 16px rgba(249,124,10,0.3)' : 'none',
-                          }}>
-                            {statutLabel[s]?.icon}
-                          </div>
-                          <span style={{ fontSize:'0.62rem', fontFamily:'var(--font-body)', color: active ? 'var(--c-brand)' : done ? '#34d399' : 'var(--c-dim)', textAlign:'center', width:'56px', lineHeight:1.3 }}>
-                            {statutLabel[s]?.label}
-                          </span>
-                        </div>
-                        {i < STEPS.length-1 && (
-                          <div style={{ flex:1, height:'2px', margin:'0 4px 20px', background: done ? '#34d399' : 'var(--c-border)', transition:'background 0.5s' }} />
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
-            {commande.statut === 'annulee' && (
-              <div style={{ background:'rgba(248,113,113,0.06)', border:'1px solid rgba(248,113,113,0.2)', borderRadius:'18px', padding:'24px', textAlign:'center' }}>
-                <div style={{ fontSize:'2.5rem', marginBottom:'10px' }}>❌</div>
-                <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'#f87171' }}>Commande annulée</div>
-              </div>
-            )}
-
-            {/* Livreur */}
-            {commande.livreur && (
-              <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'18px', display:'flex', alignItems:'center', gap:'14px' }}>
-                <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(249,124,10,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>🚚</div>
-                <div>
-                  <div style={{ color:'var(--c-muted)', fontSize:'0.7rem', fontFamily:'var(--font-mono)', marginBottom:'2px' }}>Livreur assigné</div>
-                  <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)' }}>{commande.livreur.nom}</div>
-                  <div style={{ color:'var(--c-muted)', fontFamily:'var(--font-mono)', fontSize:'0.78rem' }}>{commande.livreur.telephone}</div>
-                </div>
-              </div>
-            )}
-
-            {/* Maps link */}
-            {commande.localisation && (
-              <a href={`https://www.google.com/maps?q=${commande.localisation.lat},${commande.localisation.lng}`}
-                target="_blank" rel="noreferrer"
-                style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'14px', borderRadius:'14px', border:'1px solid var(--c-border2)', background:'var(--c-surface2)', color:'var(--c-muted)', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:600, fontSize:'0.88rem' }}>
-                🗺️ Voir le point de livraison sur la carte
-              </a>
-            )}
-
-            {/* Historique */}
-            <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'18px' }}>
-              <h3 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.9rem', marginBottom:'14px' }}>Historique</h3>
-              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
-                {commande.historiqueStatuts?.slice().reverse().map((h, i) => (
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-                    <span style={{ fontSize:'1.1rem' }}>{statutLabel[h.statut]?.icon || '•'}</span>
-                    <div>
-                      <div style={{ fontFamily:'var(--font-display)', fontWeight:600, color:'var(--c-text)', fontSize:'0.85rem' }}>{statutLabel[h.statut]?.label || h.statut}</div>
-                      <div style={{ color:'var(--c-muted)', fontFamily:'var(--font-mono)', fontSize:'0.72rem' }}>{formatDate(h.date)}</div>
-                    </div>
+              {/* Header card */}
+              <div style={{ background:'var(--c-surface)', border:`1px solid ${color}30`, borderRadius:'18px', padding:'20px' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
+                  <ProductImage imageUrl={commande.produit?.imageUrl} couleur={color} poids={commande.poids} marque={commande.marque} size={60} objectFit="contain" />
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-brand)', fontSize:'0.7rem', marginBottom:'2px' }}>{commande.numeroCommande}</div>
+                    <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'1.05rem' }}>{commande.marque} · {commande.poids}kg × {commande.quantite}</div>
+                    <div style={{ color:'var(--c-muted)', fontSize:'0.78rem', fontFamily:'var(--font-body)', marginTop:'2px' }}>{formatDateRelative(commande.createdAt)}</div>
                   </div>
-                ))}
+                  <div style={{ textAlign:'right', flexShrink:0 }}>
+                    <span className={getBadgeClass(commande.statut)} style={{ display:'inline-flex' }}>{statutLabel[commande.statut]?.icon} {statutLabel[commande.statut]?.label}</span>
+                    <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'1.3rem', marginTop:'6px' }}>{formatPrix(commande.prixTotal)}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress */}
+              {commande.statut !== 'annulee' && (
+                <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'20px' }}>
+                  <h3 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.9rem', marginBottom:'20px' }}>Progression</h3>
+                  <div style={{ display:'flex', alignItems:'center' }}>
+                    {STEPS.map((s, i) => {
+                      const done   = currentStep > i
+                      const active = currentStep === i
+                      return (
+                        <div key={s} style={{ display:'flex', alignItems:'center', flex: i < STEPS.length-1 ? 1 : 0 }}>
+                          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'6px' }}>
+                            <div style={{
+                              width:'38px', height:'38px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem', transition:'all 0.3s',
+                              background: done ? 'rgba(52,211,153,0.15)' : active ? 'rgba(249,124,10,0.15)' : 'var(--c-surface2)',
+                              border: `2px solid ${done ? '#34d399' : active ? 'var(--c-brand)' : 'var(--c-border2)'}`,
+                              boxShadow: active ? '0 0 16px rgba(249,124,10,0.3)' : 'none',
+                            }}>
+                              {statutLabel[s]?.icon}
+                            </div>
+                            <span style={{ fontSize:'0.62rem', fontFamily:'var(--font-body)', color: active ? 'var(--c-brand)' : done ? '#34d399' : 'var(--c-dim)', textAlign:'center', width:'56px', lineHeight:1.3 }}>
+                              {statutLabel[s]?.label}
+                            </span>
+                          </div>
+                          {i < STEPS.length-1 && (
+                            <div style={{ flex:1, height:'2px', margin:'0 4px 20px', background: done ? '#34d399' : 'var(--c-border)', transition:'background 0.5s' }} />
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {commande.statut === 'annulee' && (
+                <div style={{ background:'rgba(248,113,113,0.06)', border:'1px solid rgba(248,113,113,0.2)', borderRadius:'18px', padding:'24px', textAlign:'center' }}>
+                  <div style={{ fontSize:'2.5rem', marginBottom:'10px' }}>❌</div>
+                  <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'#f87171' }}>Commande annulée</div>
+                </div>
+              )}
+
+              {/* Livreur */}
+              {commande.livreur && (
+                <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'18px', display:'flex', alignItems:'center', gap:'14px' }}>
+                  <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(249,124,10,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>🚚</div>
+                  <div>
+                    <div style={{ color:'var(--c-muted)', fontSize:'0.7rem', fontFamily:'var(--font-mono)', marginBottom:'2px' }}>Livreur assigné</div>
+                    <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)' }}>{commande.livreur.nom}</div>
+                    <div style={{ color:'var(--c-muted)', fontFamily:'var(--font-mono)', fontSize:'0.78rem' }}>{commande.livreur.telephone}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Maps link */}
+              {commande.localisation && (
+                <a href={`https://www.google.com/maps?q=${commande.localisation.lat},${commande.localisation.lng}`}
+                  target="_blank" rel="noreferrer"
+                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'14px', borderRadius:'14px', border:'1px solid var(--c-border2)', background:'var(--c-surface2)', color:'var(--c-muted)', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:600, fontSize:'0.88rem' }}>
+                  🗺️ Voir le point de livraison sur la carte
+                </a>
+              )}
+
+              {/* Historique */}
+              <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'18px' }}>
+                <h3 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.9rem', marginBottom:'14px' }}>Historique</h3>
+                <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                  {commande.historiqueStatuts?.slice().reverse().map((h, i) => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                      <span style={{ fontSize:'1.1rem' }}>{statutLabel[h.statut]?.icon || '•'}</span>
+                      <div>
+                        <div style={{ fontFamily:'var(--font-display)', fontWeight:600, color:'var(--c-text)', fontSize:'0.85rem' }}>{statutLabel[h.statut]?.label || h.statut}</div>
+                        <div style={{ color:'var(--c-muted)', fontFamily:'var(--font-mono)', fontSize:'0.72rem' }}>{formatDate(h.date)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
