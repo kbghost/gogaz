@@ -7,7 +7,7 @@ import { commandeAPI } from '../../services/api'
 import { formatPrix, formatDate, formatDateRelative, statutLabel, getBadgeClass, marqueColors } from '../../utils/helpers'
 import { useSocket } from '../../context/SocketContext'
 import toast from 'react-hot-toast'
-import PushNotifier from '../../components/PushNotifier';
+import PushNotifier from '../../components/ui/PushNotifier';
 
 const STEPS = ['en_attente', 'validee', 'en_livraison', 'livree']
 
