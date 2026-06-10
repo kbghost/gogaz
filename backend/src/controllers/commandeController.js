@@ -1,6 +1,61 @@
 const Commande = require('../models/Commande');
 const Produit = require('../models/Produit');
 const { validationResult } = require('express-validator');
+const webpush = require('web-push');
+const axios = require('axios');
+const Subscription = require('../models/Subscription'); // À créer
+
+// Configuration web-push (clés VAPID depuis .env)
+webpush.setVapidDetails(
+  process.env.VAPID_SUBJECT,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
+// ---------- Helper : envoyer une notification push au client ----------
+async function sendPushToClient(commandeId, title, body) {
+  const subscription = await Subscription.findOne({ orderId: commandeId });
+  if (!subscription) return;
+
+  const payload = JSON.stringify({ title, body });
+  try {
+    await webpush.sendNotification(subscription, payload);
+    console.log(`✅ Push envoyé pour commande ${commandeId}`);
+  } catch (err) {
+    console.error(`❌ Erreur push pour ${commandeId}:`, err);
+    if (err.statusCode === 410) {
+      // Abonnement expiré -> on le supprime
+      await Subscription.deleteOne({ orderId: commandeId });
+    }
+  }
+}
+
+// ---------- Helper : envoyer un message Discord à l'admin ----------
+async function sendDiscordMessage(content) {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.warn('⚠️ DISCORD_WEBHOOK_URL non définie');
+    return;
+  }
+  try {
+    await axios.post(webhookUrl, { content });
+    console.log('📨 Message Discord envoyé');
+  } catch (err) {
+    console.error('❌ Erreur Discord:', err.message);
+  }
+}
+
+// ---------- Helper : traduire les statuts pour l'affichage ----------
+function translateStatus(statut) {
+  const map = {
+    'en_attente': 'en attente',
+    'validee': 'validée',
+    'en_livraison': 'livreur en route',
+    'livree': 'livrée',
+    'annulee': 'annulée'
+  };
+  return map[statut] || statut;
+}
 
 // @desc    Create commande
 // @route   POST /api/commandes
@@ -48,7 +103,15 @@ exports.createCommande = async (req, res) => {
     const commande = await Commande.create(commandeData);
     await commande.populate('produit');
 
-    // Emit to admin/livreurs via socket
+    // 🆕 Notification Discord à l'admin
+    const discordMsg = `🛒 **Nouvelle commande** #${commande._id}\n` +
+                       `Client : ${commande.nomClient || 'Anonyme'}\n` +
+                       `Tél : ${commande.telephoneClient}\n` +
+                       `Total : ${commande.prixTotal} FCFA\n` +
+                       `Statut : ${commande.statut}`;
+    await sendDiscordMessage(discordMsg);
+
+    // Emit to admin/livreurs via socket (déjà existant)
     const io = req.app.get('io');
     if (io) {
       io.to('admins').emit('nouvelle_commande', commande);
@@ -153,6 +216,7 @@ exports.updateStatut = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Commande introuvable.' });
     }
 
+    const ancienStatut = commande.statut;
     commande.statut = statut;
     if (livreurId && statut === 'en_livraison') {
       commande.livreur = livreurId;
@@ -164,7 +228,12 @@ exports.updateStatut = async (req, res) => {
     await commande.save();
     await commande.populate('produit client livreur');
 
-    // Emit socket event
+    // 🆕 Envoyer une notification push au client (si abonné)
+    const title = '📦 GazLivraison - Mise à jour commande';
+    const body = `Votre commande #${commande._id} est maintenant : ${translateStatus(statut)}`;
+    await sendPushToClient(commande._id, title, body);
+
+    // Emit socket events (déjà existant)
     const io = req.app.get('io');
     if (io) {
       io.to(`commande_${commande._id}`).emit('statut_update', {
