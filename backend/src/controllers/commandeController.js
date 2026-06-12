@@ -164,7 +164,7 @@ exports.createCommande = async (req, res) => {
 
 // @desc    Get all commandes (admin/livreur)
 // @route   GET /api/commandes
-exports.getCommandes = async (req, res) => {
+exports.getCommande = async (req, res) => {
   try {
     const { statut, page = 1, limit = 20 } = req.query;
     const query = {};
