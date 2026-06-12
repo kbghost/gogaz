@@ -13,8 +13,15 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY
 );
 
+// Helper : Générer un numéro de commande unique avec une partie aléatoire pour éviter l'erreur E11000
+function generateUniqueNumero() {
+  const date = new Date();
+  const timestamp = date.toISOString().slice(2, 10).replace(/-/g, ''); // Format: YYMMDD
+  const random = Math.floor(1000 + Math.random() * 9000); // 4 chiffres aléatoires (1000 à 9999)
+  return `GAZ-${timestamp}-${random}`;
+}
+
 // ---------- Helper : envoyer une notification push au client ----------
- // Assure-toi d'avoir ça en haut du fichier
 async function sendPushToClient(commandeId, title, body) {
   // 1. Vérification de la configuration VAPID
   if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
@@ -23,15 +30,15 @@ async function sendPushToClient(commandeId, title, body) {
   }
 
   try {
-    // 2. Recherche sécurisée
+    // 2. Recherche de la souscription par orderId
     const subRecord = await Subscription.findOne({ orderId: commandeId });
     
     if (!subRecord || !subRecord.endpoint) {
-      console.log(`ℹ️ Aucun abonnement actif trouvé pour ${commandeId}`);
+      console.log(`ℹ️ Aucun abonnement actif trouvé pour la commande ${commandeId}`);
       return;
     }
 
-    // 3. Formatage de l'objet pour web-push
+    // 3. Formatage strict requis par la librairie web-push
     const subscriptionForPush = {
       endpoint: subRecord.endpoint,
       keys: subRecord.keys
@@ -39,14 +46,14 @@ async function sendPushToClient(commandeId, title, body) {
 
     const payload = JSON.stringify({ title, body });
     
-    // 4. Envoi
+    // 4. Envoi de la notification
     await webpush.sendNotification(subscriptionForPush, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
     
   } catch (err) {
-    // On log l'erreur mais on NE FAIT PAS PLANTER LE SERVEUR
     console.error(`❌ Erreur push pour ${commandeId}:`, err.message);
     
+    // Si l'abonnement a expiré ou est invalide (Statut 410 Gone), on nettoie la DB
     if (err.statusCode === 410) {
       await Subscription.deleteOne({ orderId: commandeId });
     }
@@ -104,7 +111,11 @@ exports.createCommande = async (req, res) => {
 
     const prixTotal = produit.prix * quantite;
 
+    // Utilisation du helper pour générer un numéro unique et dynamique à chaque requête
+    const uniqueNumeroCommande = generateUniqueNumero();
+
     const commandeData = {
+      numeroCommande: uniqueNumeroCommande,
       nomClient,
       telephoneClient,
       produit: produit._id,
@@ -127,14 +138,14 @@ exports.createCommande = async (req, res) => {
     await commande.populate('produit');
 
     // 🆕 Notification Discord à l'admin
-    const discordMsg = `🛒 **Nouvelle commande** #${commande._id}\n` +
+    const discordMsg = `🛒 **Nouvelle commande** #${commande.numeroCommande}\n` +
                        `Client : ${commande.nomClient || 'Anonyme'}\n` +
                        `Tél : ${commande.telephoneClient}\n` +
                        `Total : ${commande.prixTotal} FCFA\n` +
                        `Statut : ${commande.statut}`;
     await sendDiscordMessage(discordMsg);
 
-    // Emit to admin/livreurs via socket (déjà existant)
+    // Emit to admin/livreurs via socket
     const io = req.app.get('io');
     if (io) {
       io.to('admins').emit('nouvelle_commande', commande);
@@ -146,7 +157,7 @@ exports.createCommande = async (req, res) => {
       commande,
     });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Erreur création commande:", error);
     res.status(500).json({ success: false, message: 'Erreur lors de la création de la commande.' });
   }
 };
@@ -239,7 +250,6 @@ exports.updateStatut = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Commande introuvable.' });
     }
 
-    const ancienStatut = commande.statut;
     commande.statut = statut;
     if (livreurId && statut === 'en_livraison') {
       commande.livreur = livreurId;
@@ -251,7 +261,7 @@ exports.updateStatut = async (req, res) => {
     await commande.save();
     await commande.populate('produit client livreur');
 
-    // 🆕 Envoyer une notification push au client avec message personnalisé
+    // Envoyer la notification push personnalisée au client
     let pushTitle = "Mise à jour GoGaz";
     let pushBody = `Le statut de votre commande est maintenant : ${translateStatus(statut)}`;
 
@@ -268,7 +278,7 @@ exports.updateStatut = async (req, res) => {
 
     await sendPushToClient(commande._id, pushTitle, pushBody);
 
-    // Emit socket events (déjà existant)
+    // Emit socket events
     const io = req.app.get('io');
     if (io) {
       io.to(`commande_${commande._id}`).emit('statut_update', {
@@ -310,16 +320,4 @@ exports.updatePosition = async (req, res) => {
 };
 
 // @desc    Get my commandes (client)
-// @route   GET /api/commandes/mes-commandes
-exports.getMesCommandes = async (req, res) => {
-  try {
-    const commandes = await Commande.find({ client: req.user._id })
-      .populate('produit', 'marque poids prix couleur')
-      .populate('livreur', 'nom telephone')
-      .sort({ createdAt: -1 });
-
-    res.json({ success: true, commandes });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Erreur.' });
-  }
-};
+//
