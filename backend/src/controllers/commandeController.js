@@ -3,7 +3,7 @@ const Produit = require('../models/Produit');
 const { validationResult } = require('express-validator');
 const webpush = require('web-push');
 const axios = require('axios');
-const Subscription = require('../models/Subscription'); // À créer
+const Subscription = require('../models/Subscription');
 
 // Configuration web-push (clés VAPID depuis .env)
 webpush.setVapidDetails(
@@ -14,12 +14,12 @@ webpush.setVapidDetails(
 
 // ---------- Helper : envoyer une notification push au client ----------
 async function sendPushToClient(commandeId, title, body) {
-  const subscription = await Subscription.findOne({ orderId: commandeId });
-  if (!subscription) return;
+  const subRecord = await Subscription.findOne({ orderId: commandeId });
+  if (!subRecord || !subRecord.subscription) return;
 
   const payload = JSON.stringify({ title, body });
   try {
-    await webpush.sendNotification(subscription, payload);
+    await webpush.sendNotification(subRecord.subscription, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
   } catch (err) {
     console.error(`❌ Erreur push pour ${commandeId}:`, err);
@@ -228,10 +228,22 @@ exports.updateStatut = async (req, res) => {
     await commande.save();
     await commande.populate('produit client livreur');
 
-    // 🆕 Envoyer une notification push au client (si abonné)
-    const title = '📦 GazLivraison - Mise à jour commande';
-    const body = `Votre commande #${commande._id} est maintenant : ${translateStatus(statut)}`;
-    await sendPushToClient(commande._id, title, body);
+    // 🆕 Envoyer une notification push au client avec message personnalisé
+    let pushTitle = "Mise à jour GoGaz";
+    let pushBody = `Le statut de votre commande est maintenant : ${translateStatus(statut)}`;
+
+    if (statut === 'validee') {
+      pushTitle = "Commande Validée ✅";
+      pushBody = "Votre commande a été acceptée. Préparation en cours !";
+    } else if (statut === 'en_livraison') {
+      pushTitle = "Livreur en route 🛵";
+      pushBody = "Préparez-vous, votre bouteille de gaz arrive !";
+    } else if (statut === 'livree') {
+      pushTitle = "Commande Livrée 🎉";
+      pushBody = "Merci d'avoir choisi GoGaz !";
+    }
+
+    await sendPushToClient(commande._id, pushTitle, pushBody);
 
     // Emit socket events (déjà existant)
     const io = req.app.get('io');
