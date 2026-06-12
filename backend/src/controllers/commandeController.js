@@ -15,27 +15,38 @@ webpush.setVapidDetails(
 
 // ---------- Helper : envoyer une notification push au client ----------
  // Assure-toi d'avoir ça en haut du fichier
-
 async function sendPushToClient(commandeId, title, body) {
+  // 1. Vérification de la configuration VAPID
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    console.error("❌ Erreur: Clés VAPID manquantes dans les variables d'environnement !");
+    return;
+  }
+
   try {
-    // 1. Conversion sécurisée de l'ID en ObjectId MongoDB
-    const objectId = new mongoose.Types.ObjectId(commandeId);
+    // 2. Recherche sécurisée
+    const subRecord = await Subscription.findOne({ orderId: commandeId });
     
-    // 2. Recherche avec le nom du champ exact 'orderId'
-    const subRecord = await Subscription.findOne({ orderId: objectId });
-    
-    if (!subRecord) {
-      console.log(`❌ Aucun abonnement trouvé pour l'ID: ${commandeId}`);
+    if (!subRecord || !subRecord.endpoint) {
+      console.log(`ℹ️ Aucun abonnement actif trouvé pour ${commandeId}`);
       return;
     }
 
+    // 3. Formatage de l'objet pour web-push
+    const subscriptionForPush = {
+      endpoint: subRecord.endpoint,
+      keys: subRecord.keys
+    };
+
     const payload = JSON.stringify({ title, body });
     
-    await webpush.sendNotification(subRecord, payload); // Note: subRecord contient déjà tout l'objet
+    // 4. Envoi
+    await webpush.sendNotification(subscriptionForPush, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
     
   } catch (err) {
-    console.error(`❌ Erreur push pour ${commandeId}:`, err);
+    // On log l'erreur mais on NE FAIT PAS PLANTER LE SERVEUR
+    console.error(`❌ Erreur push pour ${commandeId}:`, err.message);
+    
     if (err.statusCode === 410) {
       await Subscription.deleteOne({ orderId: commandeId });
     }
