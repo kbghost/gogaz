@@ -23,14 +23,12 @@ function generateUniqueNumero() {
 
 // ---------- Helper : envoyer une notification push au client ----------
 async function sendPushToClient(commandeId, title, body) {
-  // 1. Vérification de la configuration VAPID
   if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
     console.error("❌ Erreur: Clés VAPID manquantes dans les variables d'environnement !");
     return;
   }
 
   try {
-    // 2. Recherche de la souscription par orderId
     const subRecord = await Subscription.findOne({ orderId: commandeId });
     
     if (!subRecord || !subRecord.endpoint) {
@@ -38,7 +36,6 @@ async function sendPushToClient(commandeId, title, body) {
       return;
     }
 
-    // 3. Formatage strict requis par la librairie web-push
     const subscriptionForPush = {
       endpoint: subRecord.endpoint,
       keys: subRecord.keys
@@ -46,14 +43,12 @@ async function sendPushToClient(commandeId, title, body) {
 
     const payload = JSON.stringify({ title, body });
     
-    // 4. Envoi de la notification
     await webpush.sendNotification(subscriptionForPush, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
     
   } catch (err) {
     console.error(`❌ Erreur push pour ${commandeId}:`, err.message);
     
-    // Si l'abonnement a expiré ou est invalide (Statut 410 Gone), on nettoie la DB
     if (err.statusCode === 410) {
       await Subscription.deleteOne({ orderId: commandeId });
     }
@@ -110,8 +105,6 @@ exports.createCommande = async (req, res) => {
     }
 
     const prixTotal = produit.prix * quantite;
-
-    // Utilisation du helper pour générer un numéro unique et dynamique à chaque requête
     const uniqueNumeroCommande = generateUniqueNumero();
 
     const commandeData = {
@@ -137,7 +130,7 @@ exports.createCommande = async (req, res) => {
     const commande = await Commande.create(commandeData);
     await commande.populate('produit');
 
-    // 🆕 Notification Discord à l'admin
+    // Notification Discord
     const discordMsg = `🛒 **Nouvelle commande** #${commande.numeroCommande}\n` +
                        `Client : ${commande.nomClient || 'Anonyme'}\n` +
                        `Tél : ${commande.telephoneClient}\n` +
@@ -145,7 +138,6 @@ exports.createCommande = async (req, res) => {
                        `Statut : ${commande.statut}`;
     await sendDiscordMessage(discordMsg);
 
-    // Emit to admin/livreurs via socket
     const io = req.app.get('io');
     if (io) {
       io.to('admins').emit('nouvelle_commande', commande);
@@ -205,7 +197,6 @@ exports.getCommande = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Commande introuvable.' });
     }
 
-    // Check access: client can only see own orders
     if (req.user && req.user.role === 'client' && commande.client?.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Accès refusé.' });
     }
@@ -261,7 +252,6 @@ exports.updateStatut = async (req, res) => {
     await commande.save();
     await commande.populate('produit client livreur');
 
-    // Envoyer la notification push personnalisée au client
     let pushTitle = "Mise à jour GoGaz";
     let pushBody = `Le statut de votre commande est maintenant : ${translateStatus(statut)}`;
 
@@ -278,7 +268,6 @@ exports.updateStatut = async (req, res) => {
 
     await sendPushToClient(commande._id, pushTitle, pushBody);
 
-    // Emit socket events
     const io = req.app.get('io');
     if (io) {
       io.to(`commande_${commande._id}`).emit('statut_update', {
@@ -320,4 +309,16 @@ exports.updatePosition = async (req, res) => {
 };
 
 // @desc    Get my commandes (client)
-//
+// @route   GET /api/commandes/mes-commandes
+exports.getMesCommandes = async (req, res) => {
+  try {
+    const commandes = await Commande.find({ client: req.user._id })
+      .populate('produit', 'marque poids prix couleur')
+      .populate('livreur', 'nom telephone')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, commandes });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Erreur.' });
+  }
+};
