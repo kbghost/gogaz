@@ -14,26 +14,23 @@ webpush.setVapidDetails(
 
 // ---------- Helper : envoyer une notification push au client ----------
 async function sendPushToClient(commandeId, title, body) {
-  // On récupère le document d'abonnement complet
+  // On récupère le document, appelons-le subRecord pour être cohérent
   const subRecord = await Subscription.findOne({ orderId: commandeId });
   
-  // Vérification stricte
   if (!subRecord || !subRecord.subscription) {
-    console.log(`⚠️ Aucun abonnement trouvé pour la commande ${commandeId}`);
+    console.log(`⚠️ Aucun abonnement trouvé pour ${commandeId}`);
     return;
   }
 
-  // Création du payload JSON
   const payload = JSON.stringify({ title, body });
   
   try {
-    // Utilisation de subRecord.subscription
+    // Utilise bien subRecord.subscription ici
     await webpush.sendNotification(subRecord.subscription, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
   } catch (err) {
     console.error(`❌ Erreur push pour ${commandeId}:`, err);
     if (err.statusCode === 410) {
-      // L'abonnement n'est plus valide, on le supprime
       await Subscription.deleteOne({ orderId: commandeId });
     }
   }
