@@ -14,17 +14,26 @@ webpush.setVapidDetails(
 
 // ---------- Helper : envoyer une notification push au client ----------
 async function sendPushToClient(commandeId, title, body) {
+  // On récupère le document d'abonnement complet
   const subRecord = await Subscription.findOne({ orderId: commandeId });
-  if (!subRecord || !subRecord.subscription) return;
+  
+  // Vérification stricte
+  if (!subRecord || !subRecord.subscription) {
+    console.log(`⚠️ Aucun abonnement trouvé pour la commande ${commandeId}`);
+    return;
+  }
 
+  // Création du payload JSON
   const payload = JSON.stringify({ title, body });
+  
   try {
+    // Utilisation de subRecord.subscription
     await webpush.sendNotification(subRecord.subscription, payload);
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
   } catch (err) {
     console.error(`❌ Erreur push pour ${commandeId}:`, err);
     if (err.statusCode === 410) {
-      // Abonnement expiré -> on le supprime
+      // L'abonnement n'est plus valide, on le supprime
       await Subscription.deleteOne({ orderId: commandeId });
     }
   }
