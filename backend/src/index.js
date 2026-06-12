@@ -13,6 +13,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 
 const app    = express();
 const server = http.createServer(app);
+app.set('trust proxy', 1);
 
 const io = new Server(server, {
   cors: { origin: process.env.CLIENT_URL || 'https://gogaznow.com', methods: ['GET','POST'], credentials: true },
