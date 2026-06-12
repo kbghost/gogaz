@@ -7,6 +7,19 @@ import { ThemeProvider } from './context/ThemeContext'
 import App from './App'
 import './index.css'
 
+// 🆕 Enregistrement du Service Worker pour les notifications push
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('✅ Service Worker enregistré avec succès:', registration.scope);
+      })
+      .catch(err => {
+        console.error('❌ Échec de l\'enregistrement du Service Worker:', err);
+      });
+  });
+}
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
 })
