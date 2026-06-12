@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const webpush = require('web-push');
 const axios = require('axios');
 const Subscription = require('../models/Subscription');
+const mongoose = require('mongoose');
 
 // Configuration web-push (clés VAPID depuis .env)
 webpush.setVapidDetails(
@@ -13,21 +14,26 @@ webpush.setVapidDetails(
 );
 
 // ---------- Helper : envoyer une notification push au client ----------
-async function sendPushToClient(commandeId, title, body) {
-  // On récupère le document, appelons-le subRecord pour être cohérent
-  const subRecord = await Subscription.findOne({ orderId: commandeId });
-  
-  if (!subRecord || !subRecord.subscription) {
-    console.log(`⚠️ Aucun abonnement trouvé pour ${commandeId}`);
-    return;
-  }
+ // Assure-toi d'avoir ça en haut du fichier
 
-  const payload = JSON.stringify({ title, body });
-  
+async function sendPushToClient(commandeId, title, body) {
   try {
-    // Utilise bien subRecord.subscription ici
-    await webpush.sendNotification(subRecord.subscription, payload);
+    // 1. Conversion sécurisée de l'ID en ObjectId MongoDB
+    const objectId = new mongoose.Types.ObjectId(commandeId);
+    
+    // 2. Recherche avec le nom du champ exact 'orderId'
+    const subRecord = await Subscription.findOne({ orderId: objectId });
+    
+    if (!subRecord) {
+      console.log(`❌ Aucun abonnement trouvé pour l'ID: ${commandeId}`);
+      return;
+    }
+
+    const payload = JSON.stringify({ title, body });
+    
+    await webpush.sendNotification(subRecord, payload); // Note: subRecord contient déjà tout l'objet
     console.log(`✅ Push envoyé pour commande ${commandeId}`);
+    
   } catch (err) {
     console.error(`❌ Erreur push pour ${commandeId}:`, err);
     if (err.statusCode === 410) {
