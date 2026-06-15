@@ -29,6 +29,7 @@ import LivreurLayout      from './pages/livreur/LivreurLayout'
 import LivreurDashboard   from './pages/livreur/LivreurDashboard'
 import LivreurCommandes   from './pages/livreur/LivreurCommandes'
 import LivreurAccessoires from './pages/livreur/LivreurAccessoires'
+import WhatsAppButton from './components/ui/WhatsAppButton';
 
 export default function App() {
   return (
@@ -81,6 +82,7 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+        <WhatsAppButton />
       </SocketProvider>
     </AuthProvider>
   )
