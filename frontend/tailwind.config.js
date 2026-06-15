@@ -3,6 +3,16 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      keyframes: {
+        'pulse-glow': {
+          '0%': { boxShadow: '0 0 0 0 rgba(37, 211, 102, 0.7)' },
+          '70%': { boxShadow: '0 0 0 20px rgba(37, 211, 102, 0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(37, 211, 102, 0)' },
+        }
+      },
+      animation: {
+        'pulse-glow': 'pulse-glow 2s infinite',
+      },
       colors: {
         brand: {
           50:  '#fff8ed',
