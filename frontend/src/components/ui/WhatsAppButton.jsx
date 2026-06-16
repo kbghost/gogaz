@@ -3,7 +3,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 
 const WhatsAppButton = () => {
   // Ton numéro avec l'indicatif 229
-  const phoneNumber = "22968852331"; 
+  const phoneNumber = "2290152422654"; 
   const message = encodeURIComponent("Bonjour GoGaz ! Je souhaite passer une commande de gaz.");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
