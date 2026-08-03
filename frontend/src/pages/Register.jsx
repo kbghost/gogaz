@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
+import Icon from '../components/ui/Icons'
 
 export default function Register() {
   const { register } = useAuth()
@@ -25,12 +26,14 @@ export default function Register() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--c-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      <div style={{ position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '500px', height: '400px', background: 'radial-gradient(ellipse, rgba(249,124,10,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '500px', height: '400px', background: 'radial-gradient(ellipse, rgba(249,124,10,0.07) 0%, transparent 60%)', borderRadius: '28px', pointerEvents: 'none' }} />
 
       <div className="animate-scale-in" style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', textDecoration: 'none', marginBottom: '20px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #f97c0a, #ff5500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', boxShadow: '0 0 28px rgba(249,124,10,0.4)' }}>🔥</div>
+            <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #f97c0a, #ff5500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', boxShadow: '0 0 28px rgba(249,124,10,0.4)' }}>
+              <Icon name="fire" size={20} color="#fff" />
+            </div>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--c-text)' }}>Gaz<span style={{ color: '#f97c0a' }}>Livraison</span></span>
           </Link>
           <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.6rem', color: 'var(--c-text)', letterSpacing: '-0.02em', marginBottom: '6px' }}>Créer un compte</h1>
@@ -52,8 +55,8 @@ export default function Register() {
                   value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} required />
               </div>
             ))}
-            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '4px' }} disabled={loading}>
-              {loading ? '⏳ Création…' : 'Créer mon compte →'}
+            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '4px', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8 }} disabled={loading}>
+              {loading ? <><Icon name="loader" className="animate-spin" size={16} /> Création…</> : 'Créer mon compte →'}
             </button>
           </form>
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
