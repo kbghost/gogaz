@@ -4,14 +4,21 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/ui/Navbar'
 import { produitAPI } from '../../services/api'
 import ProductImage from '../../components/ui/ProductImage'
+import Icon from '../../components/ui/Icons'
 import { formatPrix, marqueColors, MARQUES } from '../../utils/helpers'
 import { useAuth } from '../../context/AuthContext'
 
 const POIDS_INFO = {
-  6:    { label:'Petite',   icon:'🟡', usage:'Studio, célibataire' },
-  12.5: { label:'Standard', icon:'🟠', usage:'Famille 2-4 personnes' },
-  25:   { label:'Grande',   icon:'🔴', usage:'Grande famille, resto' },
+  6:    { label:'Petite',   icon: { name: 'circle', color: '#f1c40f' }, usage:'Studio, célibataire' },
+  12.5: { label:'Standard', icon: { name: 'circle', color: '#f97316' }, usage:'Famille 2-4 personnes' },
+  25:   { label:'Grande',   icon: { name: 'circle', color: '#ef4444' }, usage:'Grande famille, resto' },
 }
+
+const BADGES = [
+  { icon: 'dollar', text: 'Cash à la livraison' },
+  { icon: 'truck', text: 'Livraison < 30 min' },
+  { icon: 'check', text: 'Prix fixes garantis' },
+]
 
 export default function Tarifs() {
   const { user } = useAuth()
@@ -45,13 +52,16 @@ export default function Tarifs() {
             Des prix clairs,<br/>
             <span style={{ background:'linear-gradient(135deg,#f97c0a,#ff4500)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>zéro surprise</span>
           </h1>
-          <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'1rem', maxWidth:'480px', lineHeight:1.7 }}>
+          <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'1rem', maxWidth:'480px', lineHeight:1.7' }}>
             Paiement uniquement à la livraison. Le prix affiché est le prix final.
           </p>
           {/* Badges de confiance */}
           <div style={{ display:'flex', gap:'10px', flexWrap:'wrap', marginTop:'20px' }}>
-            {['💵 Cash à la livraison','🚀 Livraison < 30 min','✅ Prix fixes garantis'].map(b => (
-              <span key={b} style={{ padding:'6px 14px', borderRadius:'99px', background:'var(--c-surface2)', border:'1px solid var(--c-border)', color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'0.8rem' }}>{b}</span>
+            {BADGES.map(b => (
+              <span key={b.text} style={{ padding:'6px 14px', borderRadius:'99px', background:'var(--c-surface2)', border:'1px solid var(--c-border)', color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'0.8rem', display:'inline-flex', alignItems:'center', gap:8 }}>
+                <Icon name={b.icon} size={16} color='var(--c-muted)' />
+                <span>{b.text}</span>
+              </span>
             ))}
           </div>
         </div>
@@ -60,7 +70,7 @@ export default function Tarifs() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'12px', marginBottom:'36px' }}>
           {Object.entries(POIDS_INFO).map(([poids, info]) => (
             <div key={poids} style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'14px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
-              <span style={{ fontSize:'1.5rem' }}>{info.icon}</span>
+              <span style={{ fontSize:'1.5rem' }}><Icon name={info.icon.name} size={20} color={info.icon.color} /></span>
               <div>
                 <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.88rem' }}>{poids}kg — {info.label}</div>
                 <div style={{ color:'var(--c-muted)', fontSize:'0.72rem', fontFamily:'var(--font-body)' }}>{info.usage}</div>
@@ -116,10 +126,10 @@ export default function Tarifs() {
                             background: isMiddle ? `${color}05` : 'transparent',
                           }}>
                             {isMiddle && (
-                              <div style={{ position:'absolute', top:'10px', right:'10px', padding:'2px 8px', borderRadius:'99px', background:`${color}20`, color, fontFamily:'var(--font-mono)', fontSize:'0.6rem', fontWeight:700 }}>POPULAIRE</div>
+                              <div style={{ position:'absolute', top:'10px', right:'10px', padding:'2px 8px', borderRadius:'99px', background:`${color}20`, color, fontFamily:'var(--font-mono)', fontSize:'0.72rem' }}>Populaire</div>
                             )}
                             <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                              <span style={{ fontSize:'1rem' }}>{info.icon}</span>
+                              <span style={{ fontSize:'1rem' }}><Icon name={info.icon?.name || 'circle'} size={18} color={info.icon?.color || 'var(--c-muted)'} /></span>
                               <div>
                                 <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem' }}>{p.poids} kg</div>
                                 <div style={{ color:'var(--c-muted)', fontSize:'0.7rem', fontFamily:'var(--font-body)' }}>{info.label}</div>
@@ -143,12 +153,12 @@ export default function Tarifs() {
         )}
 
         {/* CTA bottom */}
-        <div style={{ marginTop:'48px', borderRadius:'24px', overflow:'hidden', position:'relative', background:'linear-gradient(135deg, var(--c-surface) 0%, var(--c-surface2) 100%)', border:'1px solid var(--c-border)', padding:'clamp(28px,5vw,48px)' }}>
-          <div style={{ position:'absolute', top:'-40px', right:'-40px', width:'200px', height:'200px', borderRadius:'50%', background:'radial-gradient(circle, rgba(249,124,10,0.12), transparent 70%)', pointerEvents:'none' }} />
+        <div style={{ marginTop:'48px', borderRadius:'24px', overflow:'hidden', position:'relative', background:'linear-gradient(135deg, var(--c-surface) 0%, var(--c-surface2) 100%)', border:'1px solid var(--c-border)', padding:'20px' }}>
+          <div style={{ position:'absolute', top:'-40px', right:'-40px', width:'200px', height:'200px', borderRadius:'50%', background:'radial-gradient(circle, rgba(249,124,10,0.12), transparent 70%)' }} />
           <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:'24px' }}>
             <div>
               <h3 style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'clamp(1.2rem,4vw,1.6rem)', letterSpacing:'-0.02em', marginBottom:'8px' }}>
-                Prêt à commander ? 🏍️
+                Prêt à commander ? <Icon name="truck" size={18} />
               </h3>
               <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'0.9rem', lineHeight:1.6 }}>
                 Livraison express en moins de 30 min · Paiement cash à la réception
