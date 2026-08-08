@@ -30,17 +30,17 @@ import {
   LuPackage,
   LuSun,
   LuMoon,
-  LuHome,
+  LuHouse,
   LuLayoutDashboard,
-  LuBarChart3,
+  LuChartBar,
   LuImage,
   LuFuel,
   LuMap,
   LuX,
   LuMail,
   LuInfo,
-  LuAlertTriangle,
-  LuXCircle,
+  LuTriangleAlert,
+  LuCircleX,
   LuLock,
   LuChevronRight,
   LuChevronLeft,
@@ -52,7 +52,7 @@ import {
   LuNavigation,
   LuBell,
   LuLayers,
-  LuHelpCircle,
+  LuCircleHelp,
   LuSparkles,
   LuExternalLink,
   LuPhoneCall,
@@ -99,7 +99,7 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'box': return <LuPackage {...props} />
     case 'sun': return <LuSun {...props} />
     case 'moon': return <LuMoon {...props} />
-    case 'home': return <LuHome {...props} />
+    case 'home': return <LuHouse {...props} />
     case 'dashboard': return <LuLayoutDashboard {...props} />
     case 'chart':
     case 'bar-chart': return <LuBarChart3 {...props} />
@@ -113,8 +113,8 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'email': return <LuMail {...props} />
     case 'info': return <LuInfo {...props} />
     case 'alert':
-    case 'warning': return <LuAlertTriangle {...props} />
-    case 'x-circle': return <LuXCircle {...props} />
+    case 'warning': return <LuTriangleAlert {...props} />
+    case 'x-circle': return <LuCircleX {...props} />
     case 'lock': return <LuLock {...props} />
     case 'chevron-right': return <LuChevronRight {...props} />
     case 'chevron-left': return <LuChevronLeft {...props} />
@@ -127,7 +127,7 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'bell': return <LuBell {...props} />
     case 'layers': return <LuLayers {...props} />
     case 'help':
-    case 'help-circle': return <LuHelpCircle {...props} />
+    case 'help-circle': return <LuCircleHelp {...props} />
     case 'external-link': return <LuExternalLink {...props} />
     case 'phone-call': return <LuPhoneCall {...props} />
     case 'sparkles': return <LuSparkles {...props} />

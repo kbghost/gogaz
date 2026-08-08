@@ -83,18 +83,21 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              <div className="nav-desktop" style={{ display: 'none', gap: '8px' }}>
-                <Link to="/login"    className="btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem' }}>Connexion</Link>
-                <Link to="/commander" className="btn-primary"  style={{ padding: '9px 16px', fontSize: '0.85rem', display:'inline-flex', alignItems:'center', gap:'6px' }}>Commander <Icon name="arrow-right" size={14} /></Link>
-              </div>
-              <ThemeToggle size={36} />
+              <>
+                <div className="nav-desktop" style={{ display: 'none', gap: '8px' }}>
+                  <Link to="/login"    className="btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem' }}>Connexion</Link>
+                  <Link to="/commander" className="btn-primary"  style={{ padding: '9px 16px', fontSize: '0.85rem', display:'inline-flex', alignItems:'center', gap:'6px' }}>Commander <Icon name="arrow-right" size={14} /></Link>
+                </div>
+                <ThemeToggle size={36} />
 
-              {/* Hamburger */}
-              <button onClick={() => setOpen(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
-                {[0,1,2].map(i => (
-                  <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '18px', transform: open ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
-                ))}
-              </button>
+                {/* Hamburger */}
+                <button onClick={() => setOpen(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
+                  {[0,1,2].map(i => (
+                    <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '18px', transform: open ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
+                  ))}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
