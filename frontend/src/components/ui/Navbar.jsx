@@ -93,9 +93,9 @@ export default function Navbar() {
                 </div>
 
                 {/* Hamburger */}
-                <button onClick={() => setOpen(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
+                <button onClick={() => setOpen(v => !v)} style={{ width: '36px', height: '36px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
                   {[0,1,2].map(i => (
-                    <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '18px', transform: open ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
+                    <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '16px', transform: open ? (i===0?'rotate(45deg) translate(4px,4px)':i===2?'rotate(-45deg) translate(4px,-4px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
                   ))}
                 </button>
               </>
