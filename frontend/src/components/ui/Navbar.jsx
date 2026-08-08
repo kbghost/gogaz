@@ -105,11 +105,11 @@ export default function Navbar() {
       </nav>
 
       {/* Bottom navigation for mobile */}
-      <div className="bottom-nav" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 120, display: 'none', justifyContent: 'center', padding: '8px 12px', boxSizing: 'border-box' }}>
-        <div style={{ width: '100%', maxWidth: '900px', background: 'rgba(17,17,16,0.98)', border: '1px solid var(--c-border)', borderRadius: '18px', display: 'flex', justifyContent: 'space-between', gap: '6px', padding: '10px' }}>
+      <div className="bottom-nav" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 120, display: 'none', justifyContent: 'center', padding: '0 12px 10px', boxSizing: 'border-box' }}>
+        <div style={{ width: '100%', maxWidth: '900px', background: 'var(--c-surface)', borderTop: '1px solid var(--c-border)', borderRadius: '0', display: 'flex', justifyContent: 'space-between', gap: '6px', padding: '10px 0', boxShadow: '0 -1px 20px rgba(0,0,0,0.08)' }}>
           {[
             { to: '/', label: 'Accueil', icon: 'home' },
-            { to: '/commander', label: 'Gaz', icon: 'cart' },
+            { to: '/commander', label: 'Commander', icon: 'cart' },
             { to: '/accessoires', label: 'Accessoires', icon: 'wrench' },
             { to: '/suivi', label: 'Suivi', icon: 'map-pin' },
           ].map(item => (
@@ -128,6 +128,7 @@ export default function Navbar() {
       <style>{`
         @media (min-width: 900px) { .nav-mobile { display: none !important; } .nav-desktop { display: flex !important; } .bottom-nav { display: none !important; } }
         @media (max-width: 899px) { .hide-xs { display: none; } .bottom-nav { display: flex !important; } }
+        body { padding-bottom: 72px; }
       `}</style>
       <div style={{ position: 'fixed', top: '64px', left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(17,17,16,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid var(--c-border)', transform: open ? 'translateY(0)' : 'translateY(-120%)', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} className="nav-mobile">
         <div style={{ padding: '14px 16px 20px' }}>
