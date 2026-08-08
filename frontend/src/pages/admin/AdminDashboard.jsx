@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { statsAPI, commandeAPI, commandeAccAPI } from '../../services/api'
 import { formatPrix, formatDateRelative, statutLabel, getBadgeClass } from '../../utils/helpers'
+import Icon from '../../components/ui/Icons'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -49,14 +50,14 @@ export default function AdminDashboard() {
   const latestAcc = recentAcc?.data?.commandes?.slice(0,5) || []
 
   const CARDS = [
-    { label:'Commandes totales', val: stats?.totalCommandes ?? '—', icon:'📦', color:'#f97c0a', bg:'rgba(249,124,10,0.1)',  border:'rgba(249,124,10,0.2)' },
-    { label:'En attente',        val: stats?.enAttente      ?? '—', icon:'⏳', color:'#fbbf24', bg:'rgba(251,191,36,0.1)',  border:'rgba(251,191,36,0.2)' },
-    { label:'En livraison',      val: stats?.enLivraison    ?? '—', icon:'🚚', color:'#60a5fa', bg:'rgba(96,165,250,0.1)',  border:'rgba(96,165,250,0.2)' },
-    { label:'Livrées',           val: stats?.livrees        ?? '—', icon:'✅', color:'#34d399', bg:'rgba(52,211,153,0.1)',  border:'rgba(52,211,153,0.2)' },
-    { label:"CA aujourd'hui",    val: stats?.caJour  != null ? formatPrix(stats.caJour) : '—', icon:'💰', color:'#a78bfa', bg:'rgba(167,139,250,0.1)', border:'rgba(167,139,250,0.2)' },
-    { label:'CA ce mois',        val: stats?.caMois  != null ? formatPrix(stats.caMois) : '—', icon:'📈', color:'#f97c0a', bg:'rgba(249,124,10,0.08)', border:'rgba(249,124,10,0.15)' },
-    { label:'Clients',           val: stats?.totalClients   ?? '—', icon:'👥', color:'#34d399', bg:'rgba(52,211,153,0.08)', border:'rgba(52,211,153,0.15)' },
-    { label:'Livreurs',          val: stats?.totalLivreurs  ?? '—', icon:'🛵', color:'#fbbf24', bg:'rgba(251,191,36,0.08)', border:'rgba(251,191,36,0.15)' },
+    { label:'Commandes totales', val: stats?.totalCommandes ?? '—', icon:'package',   color:'#f97c0a', bg:'rgba(249,124,10,0.1)',  border:'rgba(249,124,10,0.2)' },
+    { label:'En attente',        val: stats?.enAttente      ?? '—', icon:'clock',      color:'#fbbf24', bg:'rgba(251,191,36,0.1)',  border:'rgba(251,191,36,0.2)' },
+    { label:'En livraison',      val: stats?.enLivraison    ?? '—', icon:'truck',      color:'#60a5fa', bg:'rgba(96,165,250,0.1)',  border:'rgba(96,165,250,0.2)' },
+    { label:'Livrées',           val: stats?.livrees        ?? '—', icon:'check',      color:'#34d399', bg:'rgba(52,211,153,0.1)',  border:'rgba(52,211,153,0.2)' },
+    { label:"CA aujourd'hui",    val: stats?.caJour  != null ? formatPrix(stats.caJour) : '—', icon:'dollar', color:'#a78bfa', bg:'rgba(167,139,250,0.1)', border:'rgba(167,139,250,0.2)' },
+    { label:'CA ce mois',        val: stats?.caMois  != null ? formatPrix(stats.caMois) : '—', icon:'bar-chart', color:'#f97c0a', bg:'rgba(249,124,10,0.08)', border:'rgba(249,124,10,0.15)' },
+    { label:'Clients',           val: stats?.totalClients   ?? '—', icon:'users',      color:'#34d399', bg:'rgba(52,211,153,0.08)', border:'rgba(52,211,153,0.15)' },
+    { label:'Livreurs',          val: stats?.totalLivreurs  ?? '—', icon:'truck',      color:'#fbbf24', bg:'rgba(251,191,36,0.08)', border:'rgba(251,191,36,0.15)' },
   ]
 
   const axisStyle = { fill:'var(--c-muted)', fontSize:'0.65rem', fontFamily:'var(--font-mono)' }
@@ -76,7 +77,7 @@ export default function AdminDashboard() {
             {isLoading
               ? <div className="skeleton" style={{ height:'48px', borderRadius:'8px' }} />
               : <>
-                  <div style={{ fontSize:'1.4rem', marginBottom:'8px' }}>{c.icon}</div>
+                  <div style={{ display:'flex', marginBottom:'8px' }}><Icon name={c.icon} size={24} color={c.color} /></div>
                   <div style={{ fontFamily:'var(--font-display)', fontWeight:800, fontSize:'1.4rem', color:c.color, lineHeight:1 }}>{c.val}</div>
                   <div style={{ color:'var(--c-muted)', fontSize:'0.72rem', fontFamily:'var(--font-body)', marginTop:'5px' }}>{c.label}</div>
                 </>
@@ -87,7 +88,7 @@ export default function AdminDashboard() {
 
       {/* ── Area Chart : CA 7 jours ── */}
       <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'20px 16px' }}>
-        <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px' }}>📈 Chiffre d'affaires — 7 derniers jours</h2>
+        <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px', display:'flex', alignItems:'center', gap:'8px' }}><Icon name="bar-chart" size={18} color="var(--c-brand)" /> Chiffre d'affaires — 7 derniers jours</h2>
         <p style={{ color:'var(--c-muted)', fontSize:'0.75rem', fontFamily:'var(--font-body)', marginBottom:'20px' }}>Gaz + Accessoires</p>
         {isLoading || chartData.length === 0 ? (
           <div className="skeleton" style={{ height:'200px', borderRadius:'12px' }} />
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
 
         {/* Nombre de commandes par jour */}
         <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'20px 16px' }}>
-          <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px' }}>📦 Commandes / jour</h2>
+          <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px', display:'inline-flex', alignItems:'center', gap:'8px' }}><Icon name="package" size={18} color="var(--c-brand)" /> Commandes / jour</h2>
           <p style={{ color:'var(--c-muted)', fontSize:'0.75rem', fontFamily:'var(--font-body)', marginBottom:'20px' }}>7 derniers jours</p>
           {isLoading || chartData.length === 0 ? (
             <div className="skeleton" style={{ height:'180px', borderRadius:'12px' }} />
@@ -142,7 +143,7 @@ export default function AdminDashboard() {
 
         {/* Répartition statuts */}
         <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'20px 16px' }}>
-          <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px' }}>🎯 Répartition des statuts</h2>
+          <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.95rem', marginBottom:'4px', display:'flex', alignItems:'center', gap:'8px' }}><Icon name="chart" size={18} color="var(--c-brand)" /> Répartition des statuts</h2>
           <p style={{ color:'var(--c-muted)', fontSize:'0.75rem', fontFamily:'var(--font-body)', marginBottom:'12px' }}>Commandes gaz en cours</p>
           {isLoading || statutsData.length === 0 ? (
             <div className="skeleton" style={{ height:'180px', borderRadius:'12px' }} />
@@ -173,12 +174,12 @@ export default function AdminDashboard() {
       {/* ── Recent orders ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:'16px' }}>
         {[
-          { title:'⛽ Dernières commandes gaz', list: latestGaz, type:'gaz' },
-          { title:'🔧 Dernières commandes accessoires', list: latestAcc, type:'acc' },
-        ].map(({ title, list, type }) => (
+          { title:'Dernières commandes gaz',        titleIcon:'fuel',   list: latestGaz, type:'gaz' },
+          { title:'Dernières commandes accessoires', titleIcon:'wrench',  list: latestAcc, type:'acc' },
+        ].map(({ title, titleIcon, list, type }) => (
           <div key={type} style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', overflow:'hidden' }}>
             <div style={{ padding:'16px 18px', borderBottom:'1px solid var(--c-border)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.92rem' }}>{title}</h2>
+              <h2 style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)', fontSize:'0.92rem', display:'flex', alignItems:'center', gap:'8px' }}><Icon name={titleIcon} size={16} color="var(--c-brand)" /> {title}</h2>
               <a href="/admin/commandes" style={{ color:'var(--c-brand)', fontSize:'0.75rem', fontFamily:'var(--font-display)', fontWeight:600, textDecoration:'none' }}>Voir tout →</a>
             </div>
             {list.length === 0

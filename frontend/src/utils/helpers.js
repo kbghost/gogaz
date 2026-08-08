@@ -29,11 +29,11 @@ export const formatDateRelative = (date) => {
 }
 
 export const statutLabel = {
-    en_attente: { label: 'En attente', icon: '⏳', step: 0 },
-    validee: { label: 'Validée', icon: '✅', step: 1 },
-    en_livraison: { label: 'En cours', icon: '🚚', step: 2 },
-    livree: { label: 'Livrée', icon: '🎉', step: 3 },
-    annulee: { label: 'Annulée', icon: '❌', step: -1 },
+    en_attente: { label: 'En attente', icon: 'clock', step: 0 },
+    validee: { label: 'Validée', icon: 'check', step: 1 },
+    en_livraison: { label: 'En cours', icon: 'truck', step: 2 },
+    livree: { label: 'Livrée', icon: 'sparkles', step: 3 },
+    annulee: { label: 'Annulée', icon: 'x-circle', step: -1 },
 }
 
 export const getBadgeClass = (statut) => {

@@ -30,6 +30,32 @@ import {
   LuPackage,
   LuSun,
   LuMoon,
+  LuHome,
+  LuLayoutDashboard,
+  LuBarChart3,
+  LuImage,
+  LuFuel,
+  LuMap,
+  LuX,
+  LuMail,
+  LuInfo,
+  LuAlertTriangle,
+  LuXCircle,
+  LuLock,
+  LuChevronRight,
+  LuChevronLeft,
+  LuChevronDown,
+  LuChevronUp,
+  LuCopy,
+  LuRefreshCw,
+  LuDownload,
+  LuNavigation,
+  LuBell,
+  LuLayers,
+  LuHelpCircle,
+  LuSparkles,
+  LuExternalLink,
+  LuPhoneCall,
 } from 'react-icons/lu'
 
 // Icon mapper using Lucide icons via react-icons/lu
@@ -39,6 +65,7 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'fire':
     case 'flame': return <LuFlame {...props} />
     case 'map-pin': return <LuMapPin {...props} />
+    case 'map': return <LuMap {...props} />
     case 'check': return <LuCircleCheck {...props} />
     case 'check-simple': return <LuCheck {...props} />
     case 'truck': return <LuTruck {...props} />
@@ -53,7 +80,8 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'dollar': return <LuDollarSign {...props} />
     case 'eye': return <LuEye {...props} />
     case 'eye-off': return <LuEyeOff {...props} />
-    case 'loader': return <LuLoaderCircle {...props} />
+    case 'loader':
+    case 'spinner': return <LuLoaderCircle {...props} />
     case 'circle': return <LuCircle {...props} />
     case 'phone': return <LuPhone {...props} />
     case 'logout': return <LuLogOut {...props} />
@@ -61,16 +89,48 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'search': return <LuSearch {...props} />
     case 'plus': return <LuPlus {...props} />
     case 'trash': return <LuTrash2 {...props} />
-    case 'edit': return <LuPencil {...props} />
+    case 'edit':
+    case 'pencil': return <LuPencil {...props} />
     case 'filter': return <LuFilter {...props} />
     case 'shield': return <LuShieldCheck {...props} />
     case 'arrow-right': return <LuArrowRight {...props} />
     case 'star': return <LuStar {...props} />
-    case 'package': return <LuPackage {...props} />
+    case 'package':
+    case 'box': return <LuPackage {...props} />
     case 'sun': return <LuSun {...props} />
     case 'moon': return <LuMoon {...props} />
+    case 'home': return <LuHome {...props} />
+    case 'dashboard': return <LuLayoutDashboard {...props} />
+    case 'chart':
+    case 'bar-chart': return <LuBarChart3 {...props} />
+    case 'image':
+    case 'slider': return <LuImage {...props} />
+    case 'fuel':
+    case 'gas': return <LuFuel {...props} />
+    case 'close':
+    case 'x': return <LuX {...props} />
+    case 'mail':
+    case 'email': return <LuMail {...props} />
+    case 'info': return <LuInfo {...props} />
+    case 'alert':
+    case 'warning': return <LuAlertTriangle {...props} />
+    case 'x-circle': return <LuXCircle {...props} />
+    case 'lock': return <LuLock {...props} />
+    case 'chevron-right': return <LuChevronRight {...props} />
+    case 'chevron-left': return <LuChevronLeft {...props} />
+    case 'chevron-down': return <LuChevronDown {...props} />
+    case 'chevron-up': return <LuChevronUp {...props} />
+    case 'copy': return <LuCopy {...props} />
+    case 'refresh': return <LuRefreshCw {...props} />
+    case 'download': return <LuDownload {...props} />
+    case 'navigation': return <LuNavigation {...props} />
+    case 'bell': return <LuBell {...props} />
+    case 'layers': return <LuLayers {...props} />
+    case 'help':
+    case 'help-circle': return <LuHelpCircle {...props} />
+    case 'external-link': return <LuExternalLink {...props} />
+    case 'phone-call': return <LuPhoneCall {...props} />
+    case 'sparkles': return <LuSparkles {...props} />
     default: return <span style={{ display: 'inline-block', width: size, height: size }} />
   }
 }
-
-

@@ -2,11 +2,12 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import ThemeToggle from '../../components/ui/ThemeToggle'
+import Icon from '../../components/ui/Icons'
 
 const TABS = [
-  { to:'/livreur',             label:'Accueil',      icon:'🏠', end:true },
-  { to:'/livreur/commandes',   label:'Gaz',          icon:'⛽' },
-  { to:'/livreur/accessoires', label:'Accessoires',  icon:'🔧' },
+  { to:'/livreur',             label:'Accueil',      icon:'home', end:true },
+  { to:'/livreur/commandes',   label:'Gaz',          icon:'fuel' },
+  { to:'/livreur/accessoires', label:'Accessoires',  icon:'wrench' },
 ]
 
 export default function LivreurLayout() {
@@ -31,9 +32,9 @@ export default function LivreurLayout() {
             <div style={{
               width:'36px', height:'36px', borderRadius:'10px',
               background:'linear-gradient(135deg,#f97c0a,#e53935)',
-              display:'flex', alignItems:'center', justifyContent:'center', fontSize:'18px',
+              display:'flex', alignItems:'center', justifyContent:'center',
               boxShadow:'0 0 16px rgba(249,124,10,0.3)',
-            }}>🚚</div>
+            }}><Icon name="truck" color="#fff" size={20} /></div>
             <div>
               <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'0.95rem', lineHeight:1 }}>
                 Espace Livreur
@@ -60,9 +61,9 @@ export default function LivreurLayout() {
               style={{
                 width:'34px', height:'34px', borderRadius:'8px',
                 background:'rgba(248,113,113,0.1)', border:'1px solid rgba(248,113,113,0.2)',
-                color:'#f87171', cursor:'pointer', fontSize:'0.9rem',
+                color:'#f87171', cursor:'pointer',
                 display:'flex', alignItems:'center', justifyContent:'center',
-              }}>🚪</button>
+              }}><Icon name="logout" size={16} /></button>
           </div>
         </div>
       </header>
@@ -93,7 +94,7 @@ export default function LivreurLayout() {
               background: isActive ? 'rgba(249,124,10,0.06)' : 'transparent',
               transition:'color 0.15s',
             })}>
-            <span style={{ fontSize:'1.3rem', lineHeight:1 }}>{tab.icon}</span>
+            <span style={{ display:'flex', alignItems:'center', justifyContent:'center' }}><Icon name={tab.icon} size={20} /></span>
             <span>{tab.label}</span>
           </NavLink>
         ))}

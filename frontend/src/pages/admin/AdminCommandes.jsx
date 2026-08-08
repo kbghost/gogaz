@@ -151,7 +151,7 @@ export default function AdminCommandes() {
                     <td style={S.tCell}><span style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'0.9rem' }}>{formatPrix(c.prixTotal)}</span></td>
                     <td style={S.tCell}><span className={getBadgeClass(c.statut)}>{statutLabel[c.statut]?.label}</span></td>
                     <td style={S.tCell}><span style={{ color:'var(--c-dim)', fontSize:'0.75rem' }}>{formatDateRelative(c.createdAt)}</span></td>
-                    <td style={S.tCell}><span style={{ color:'var(--c-brand)', fontWeight:700 }}>Gérer →</span></td>
+                    <td style={S.tCell}><span style={{ color:'var(--c-brand)', fontWeight:700, display:'inline-flex', alignItems:'center', gap:'6px' }}>Gérer <Icon name="arrow-right" size={14} /></span></td>
                   </tr>
                 ))}
               </tbody>
@@ -167,7 +167,7 @@ export default function AdminCommandes() {
             
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'16px' }}>
               <h3 style={{ fontFamily:'var(--font-display)', fontWeight:800 }}>Détails Commande</h3>
-              <button onClick={() => setSel(null)} style={{ border:'none', background:'none', cursor:'pointer' }}>✕</button>
+              <button onClick={() => setSel(null)} style={{ border:'none', background:'none', cursor:'pointer' }}><Icon name="x" size={18} /></button>
             </div>
 
             <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'12px', fontSize:'0.85rem' }}>

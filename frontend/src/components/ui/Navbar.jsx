@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext'
 import ThemeToggle from './ThemeToggle'
 import Logo from './Logo'
 
+import Icon from './Icons'
+
 export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -68,25 +70,22 @@ export default function Navbar() {
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div className="nav-desktop" style={{ display: 'none', alignItems: 'center', gap: '8px' }}>
-                  {user.role === 'admin'   && <Link to="/admin"            style={linkStyle}>Dashboard →</Link>}
-                  {user.role === 'livreur' && <Link to="/livreur"          style={linkStyle}>Livraisons →</Link>}
-                  {user.role === 'client'  && <Link to="/mes-commandes"    style={linkStyle}>Mes commandes →</Link>}
+                  {user.role === 'admin'   && <Link to="/admin"            style={linkStyle}><span style={{ display:'inline-flex', alignItems:'center', gap:'6px' }}>Dashboard <Icon name="arrow-right" size={14} /></span></Link>}
+                  {user.role === 'livreur' && <Link to="/livreur"          style={linkStyle}><span style={{ display:'inline-flex', alignItems:'center', gap:'6px' }}>Livraisons <Icon name="arrow-right" size={14} /></span></Link>}
+                  {user.role === 'client'  && <Link to="/mes-commandes"    style={linkStyle}><span style={{ display:'inline-flex', alignItems:'center', gap:'6px' }}>Mes commandes <Icon name="arrow-right" size={14} /></span></Link>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 12px 5px 7px', background: 'var(--c-surface2)', border: '1px solid var(--c-border)', borderRadius: '99px' }}>
                   <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'linear-gradient(135deg,#f97c0a,#e53935)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.72rem', fontWeight: 800, fontFamily: 'var(--font-display)', flexShrink: 0 }}>
                     {user.nom.charAt(0).toUpperCase()}
                   </div>
                   <span style={{ color: 'var(--c-muted)', fontSize: '0.82rem', fontFamily: 'var(--font-body)' }} className="hide-xs">{user.nom.split(' ')[0]}</span>
-                  <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-dim)', fontSize: '0.65rem', padding: '2px', lineHeight: 1 }} title="Déconnexion">✕</button>
+                  <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-dim)', fontSize: '0.65rem', padding: '2px', lineHeight: 1 }} title="Déconnexion"><Icon name="x" size={16} /></button>
                 </div>
               </div>
             ) : (
               <div className="nav-desktop" style={{ display: 'none', gap: '8px' }}>
                 <Link to="/login"    className="btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem' }}>Connexion</Link>
-                <Link to="/commander" className="btn-primary"  style={{ padding: '9px 16px', fontSize: '0.85rem' }}>Commander →</Link>
-              </div>
-            )}
-
+                <Link to="/commander" className="btn-primary"  style={{ padding: '9px 16px', fontSize: '0.85rem', display:'inline-flex', alignItems:'center', gap:'6px' }}>Commander <Icon name="arrow-right" size={14} /></Link>
             <ThemeToggle size={36} />
 
             {/* Hamburger */}
@@ -121,14 +120,14 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {user?.role === 'client'  && <Link to="/mes-commandes" onClick={() => setOpen(false)} style={mobileLink}>📦 Mes commandes</Link>}
-          {user?.role === 'admin'   && <Link to="/admin"         onClick={() => setOpen(false)} style={mobileLink}>📊 Dashboard Admin</Link>}
-          {user?.role === 'livreur' && <Link to="/livreur"       onClick={() => setOpen(false)} style={mobileLink}>🚚 Mes livraisons</Link>}
+          {user?.role === 'client'  && <Link to="/mes-commandes" onClick={() => setOpen(false)} style={mobileLink}><Icon name="package" size={16} /> Mes commandes</Link>}
+          {user?.role === 'admin'   && <Link to="/admin"         onClick={() => setOpen(false)} style={mobileLink}><Icon name="dashboard" size={16} /> Dashboard Admin</Link>}
+          {user?.role === 'livreur' && <Link to="/livreur"       onClick={() => setOpen(false)} style={mobileLink}><Icon name="truck" size={16} /> Mes livraisons</Link>}
 
           <div style={{ borderTop: '1px solid var(--c-border)', marginTop: '12px', paddingTop: '12px' }}>
             {user ? (
               <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '12px', border: 'none', background: 'rgba(248,113,113,0.08)', color: '#f87171', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}>
-                🚪 Déconnexion
+                <Icon name="logout" size={16} /> Déconnexion
               </button>
             ) : (
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -149,4 +148,4 @@ export default function Navbar() {
 }
 
 const linkStyle = { color: 'var(--c-brand)', fontSize: '0.85rem', fontFamily: 'var(--font-display)', fontWeight: 600, textDecoration: 'none' }
-const mobileLink = { display: 'block', padding: '12px 14px', borderRadius: '12px', textDecoration: 'none', color: 'var(--c-muted)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: '2px' }
+const mobileLink = { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', borderRadius: '12px', textDecoration: 'none', color: 'var(--c-muted)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: '2px' }

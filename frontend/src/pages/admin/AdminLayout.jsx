@@ -3,16 +3,17 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useEffect, useState } from 'react'
 import ThemeToggle from '../../components/ui/ThemeToggle'
+import Icon from '../../components/ui/Icons'
 import toast from 'react-hot-toast'
 
 const NAV = [
-  { to:'/admin',              label:'Dashboard',    icon:'📊', end:true },
-  { to:'/admin/commandes',    label:'Commandes',    icon:'📦' },
-  { to:'/admin/produits',     label:'Produits',     icon:'⛽' },
-  { to:'/admin/accessoires',  label:'Accessoires',  icon:'🔧' },
-  { to:'/admin/slider',       label:'Slider',       icon:'🖼️' },
-  { to:'/admin/utilisateurs', label:'Utilisateurs', icon:'👥' },
-  { to:'/admin/carte',        label:'Carte live',   icon:'🗺️' },
+  { to:'/admin',              label:'Dashboard',    icon:'dashboard', end:true },
+  { to:'/admin/commandes',    label:'Commandes',    icon:'package' },
+  { to:'/admin/produits',     label:'Produits',     icon:'fuel' },
+  { to:'/admin/accessoires',  label:'Accessoires',  icon:'wrench' },
+  { to:'/admin/slider',       label:'Slider',       icon:'image' },
+  { to:'/admin/utilisateurs', label:'Utilisateurs', icon:'users' },
+  { to:'/admin/carte',        label:'Carte live',   icon:'map' },
 ]
 
 export default function AdminLayout() {
@@ -50,7 +51,9 @@ export default function AdminLayout() {
         {/* Brand */}
         <div style={{ padding:'20px 16px', borderBottom:'1px solid var(--c-border)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-            <div style={{ width:'34px', height:'34px', borderRadius:'10px', background:'linear-gradient(135deg,#f97c0a,#e53935)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px', boxShadow:'0 0 16px rgba(249,124,10,0.35)' }}>🔥</div>
+            <div style={{ width:'34px', height:'34px', borderRadius:'10px', background:'linear-gradient(135deg,#f97c0a,#e53935)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 16px rgba(249,124,10,0.35)' }}>
+              <Icon name="fire" color="#fff" size={18} />
+            </div>
             <div>
               <div style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'0.95rem', lineHeight:1 }}>GoGaz</div>
               <div style={{ color:'var(--c-brand)', fontSize:'0.68rem', fontFamily:'var(--font-mono)', marginTop:'2px' }}>Admin Panel</div>
@@ -62,7 +65,9 @@ export default function AdminLayout() {
         <nav style={{ flex:1, padding:'12px 8px', overflowY:'auto', display:'flex', flexDirection:'column', gap:'2px' }}>
           {NAV.map(item => (
             <NavLink key={item.to} to={item.to} end={item.end} style={({ isActive }) => navLinkStyle(isActive)}>
-              <span style={{ fontSize:'1.1rem', width:'22px', textAlign:'center', flexShrink:0 }}>{item.icon}</span>
+              <span style={{ display:'flex', alignItems:'center', justifyContent:'center', width:'22px', flexShrink:0 }}>
+                <Icon name={item.icon} size={18} />
+              </span>
               <span style={{ flex:1 }}>{item.label}</span>
               {item.label==='Commandes' && newOrders>0 && (
                 <span style={{ background:'var(--c-brand)', color:'#fff', fontSize:'0.65rem', fontFamily:'var(--font-mono)', borderRadius:'99px', padding:'2px 6px', fontWeight:700 }}>
@@ -88,8 +93,8 @@ export default function AdminLayout() {
             </div>
             <ThemeToggle size={28} />
           </div>
-          <button onClick={handleLogout} style={{ width:'100%', padding:'10px', borderRadius:'10px', background:'rgba(248,113,113,0.08)', border:'1px solid rgba(248,113,113,0.2)', color:'#f87171', fontFamily:'var(--font-display)', fontWeight:700, fontSize:'0.82rem', cursor:'pointer' }}>
-            🚪 Déconnexion
+          <button onClick={handleLogout} style={{ width:'100%', padding:'10px', borderRadius:'10px', background:'rgba(248,113,113,0.08)', border:'1px solid rgba(248,113,113,0.2)', color:'#f87171', fontFamily:'var(--font-display)', fontWeight:700, fontSize:'0.82rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px' }}>
+            <Icon name="logout" size={16} /> Déconnexion
           </button>
         </div>
       </aside>
@@ -97,7 +102,9 @@ export default function AdminLayout() {
       {/* Mobile top header */}
       <header style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:'rgba(17,17,16,0.96)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--c-border)', height:'56px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px', paddingTop:'env(safe-area-inset-top)' }} className="lg-hide">
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-          <div style={{ width:'30px', height:'30px', borderRadius:'8px', background:'linear-gradient(135deg,#f97c0a,#e53935)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px' }}>🔥</div>
+          <div style={{ width:'30px', height:'30px', borderRadius:'8px', background:'linear-gradient(135deg,#f97c0a,#e53935)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <Icon name="fire" color="#fff" size={16} />
+          </div>
           <span style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-text)', fontSize:'0.9rem' }}>GoGaz <span style={{ color:'var(--c-brand)' }}>Admin</span></span>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
@@ -128,8 +135,8 @@ export default function AdminLayout() {
               fontSize:'0.55rem', borderTop: isActive ? '2px solid var(--c-brand)' : '2px solid transparent',
               background: isActive ? 'rgba(249,124,10,0.05)' : 'transparent',
             })}>
-            <span style={{ fontSize:'1.1rem', lineHeight:1, position:'relative' }}>
-              {item.icon}
+            <span style={{ fontSize:'1.1rem', lineHeight:1, position:'relative', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <Icon name={item.icon} size={18} />
               {item.label==='Commandes' && newOrders>0 && (
                 <span style={{ position:'absolute', top:'-4px', right:'-4px', background:'var(--c-brand)', color:'#fff', fontSize:'0.55rem', borderRadius:'99px', padding:'1px 4px', fontFamily:'var(--font-mono)', fontWeight:700 }}>{newOrders}</span>
               )}
@@ -138,7 +145,7 @@ export default function AdminLayout() {
           </NavLink>
         ))}
         <button onClick={handleLogout} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'3px', padding:'8px 0', minHeight:'52px', background:'none', border:'none', borderTop:'2px solid transparent', color:'rgba(248,113,113,0.6)', fontFamily:'var(--font-display)', fontWeight:500, fontSize:'0.55rem', cursor:'pointer' }}>
-          <span style={{ fontSize:'1.1rem', lineHeight:1 }}>🚪</span>
+          <Icon name="logout" size={18} />
           <span>Quitter</span>
         </button>
       </nav>

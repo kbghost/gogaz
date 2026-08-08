@@ -8,6 +8,7 @@ import { formatPrix, formatDate, formatDateRelative, statutLabel, getBadgeClass,
 import { useSocket } from '../../context/SocketContext'
 import toast from 'react-hot-toast'
 import PushNotifier from '../../components/ui/PushNotifier';
+import Icon from '../../components/ui/Icons'
 
 const STEPS = ['en_attente', 'validee', 'en_livraison', 'livree']
 
@@ -67,7 +68,7 @@ export default function SuiviCommande() {
         <form onSubmit={handleSearch} style={{ display:'flex', gap:'10px', marginBottom:'24px' }}>
           <input type="text" style={inputSt} placeholder="Ex: GAZ-260321-0001"
             value={searchNum} onChange={e => setSearchNum(e.target.value.toUpperCase())} />
-          <button type="submit" className="btn-primary" style={{ padding:'12px 20px' }}>🔍</button>
+          <button type="submit" className="btn-primary" style={{ padding:'12px 20px', display:'flex', alignItems:'center', gap:'6px' }}><Icon name="search" size={16} /></button>
         </form>
 
         {isLoading && (
@@ -78,7 +79,7 @@ export default function SuiviCommande() {
 
         {error && !isLoading && (
           <div style={{ background:'rgba(248,113,113,0.06)', border:'1px solid rgba(248,113,113,0.2)', borderRadius:'16px', padding:'32px', textAlign:'center' }}>
-            <div style={{ fontSize:'2.5rem', marginBottom:'10px' }}>❌</div>
+            <div style={{ display:'flex', justifyContent:'center', marginBottom:'10px' }}><Icon name="x-circle" size={40} color="#f87171" /></div>
             <p style={{ color:'#f87171', fontFamily:'var(--font-body)', fontSize:'0.9rem' }}>Commande introuvable. Vérifiez le numéro.</p>
           </div>
         )}
@@ -139,7 +140,7 @@ export default function SuiviCommande() {
 
               {commande.statut === 'annulee' && (
                 <div style={{ background:'rgba(248,113,113,0.06)', border:'1px solid rgba(248,113,113,0.2)', borderRadius:'18px', padding:'24px', textAlign:'center' }}>
-                  <div style={{ fontSize:'2.5rem', marginBottom:'10px' }}>❌</div>
+                  <div style={{ display:'flex', justifyContent:'center', marginBottom:'10px' }}><Icon name="x-circle" size={40} color="#f87171" /></div>
                   <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'#f87171' }}>Commande annulée</div>
                 </div>
               )}
@@ -147,7 +148,7 @@ export default function SuiviCommande() {
               {/* Livreur */}
               {commande.livreur && (
                 <div style={{ background:'var(--c-surface)', border:'1px solid var(--c-border)', borderRadius:'18px', padding:'18px', display:'flex', alignItems:'center', gap:'14px' }}>
-                  <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(249,124,10,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>🚚</div>
+                  <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(249,124,10,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Icon name="truck" size={22} color="var(--c-brand)" /></div>
                   <div>
                     <div style={{ color:'var(--c-muted)', fontSize:'0.7rem', fontFamily:'var(--font-mono)', marginBottom:'2px' }}>Livreur assigné</div>
                     <div style={{ fontFamily:'var(--font-display)', fontWeight:700, color:'var(--c-text)' }}>{commande.livreur.nom}</div>
@@ -161,7 +162,7 @@ export default function SuiviCommande() {
                 <a href={`https://www.google.com/maps?q=${commande.localisation.lat},${commande.localisation.lng}`}
                   target="_blank" rel="noreferrer"
                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'14px', borderRadius:'14px', border:'1px solid var(--c-border2)', background:'var(--c-surface2)', color:'var(--c-muted)', textDecoration:'none', fontFamily:'var(--font-display)', fontWeight:600, fontSize:'0.88rem' }}>
-                  🗺️ Voir le point de livraison sur la carte
+                  <Icon name="map" size={16} /> Voir le point de livraison sur la carte
                 </a>
               )}
 

@@ -4,13 +4,14 @@ import { commandeAPI } from '../../services/api'
 import { formatPrix, formatDateRelative, getBadgeClass, statutLabel, marqueColors } from '../../utils/helpers'
 import { useSocket } from '../../context/SocketContext'
 import ProductImage from '../../components/ui/ProductImage'
+import Icon from '../../components/ui/Icons'
 import toast from 'react-hot-toast'
 
 const TABS = [
-  { val: 'en_attente',   label: 'En attente', icon: '⏳' },
-  { val: 'validee',      label: 'Validées',   icon: '✅' },
-  { val: 'en_livraison', label: 'En cours',   icon: '🚚' },
-  { val: 'livree',       label: 'Livrées',    icon: '🎉' },
+  { val: 'en_attente',   label: 'En attente', icon: 'clock' },
+  { val: 'validee',      label: 'Validées',   icon: 'check-simple' },
+  { val: 'en_livraison', label: 'En cours',   icon: 'truck' },
+  { val: 'livree',       label: 'Livrées',    icon: 'package' },
 ]
 
 const fmtDate = (d) => new Date(d).toLocaleDateString('fr-BJ', {
@@ -54,8 +55,8 @@ export default function LivreurCommandes() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '0 auto' }}>
-      <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', color: 'var(--c-text)' }}>
-        Commandes gaz ⛽
+      <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', color: 'var(--c-text)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <Icon name="fuel" size={22} color="var(--c-brand)" /> Commandes gaz
       </h1>
 
       {/* Tabs */}
@@ -67,8 +68,9 @@ export default function LivreurCommandes() {
             color: statut === t.val ? '#fff' : 'var(--c-muted)',
             fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.8rem',
             boxShadow: statut === t.val ? '0 0 12px rgba(249,124,10,0.3)' : 'none',
+            display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {t.icon} {t.label}
+            <Icon name={t.icon} size={14} /> {t.label}
           </button>
         ))}
       </div>
@@ -79,7 +81,9 @@ export default function LivreurCommandes() {
 
       {!isLoading && commandes.length === 0 && (
         <div style={{ textAlign: 'center', padding: '50px 20px', background: 'var(--c-surface)', borderRadius: '18px', border: '1px solid var(--c-border)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📭</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+            <Icon name="package" size={48} color="var(--c-dim)" />
+          </div>
           <p style={{ color: 'var(--c-muted)', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}>
             Aucune commande dans cette catégorie
           </p>
@@ -127,8 +131,8 @@ export default function LivreurCommandes() {
             {/* ── Itinéraire vers le client ── */}
             {c.localisation && (
               <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--c-border)', background: 'rgba(96,165,250,0.04)' }}>
-                <div style={{ color: 'var(--c-dim)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
-                  📍 Point de livraison
+                <div style={{ color: 'var(--c-dim)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Icon name="map-pin" size={12} /> Point de livraison
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--c-muted)', fontSize: '0.72rem', marginBottom: '8px' }}>
                   {c.localisation.lat?.toFixed(5)}, {c.localisation.lng?.toFixed(5)}
@@ -139,7 +143,7 @@ export default function LivreurCommandes() {
                   rel="noreferrer"
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '11px', borderRadius: '12px', background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.25)', color: '#60a5fa', textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem' }}
                 >
-                  🗺️ Ouvrir l'itinéraire GPS
+                  <Icon name="navigation" size={16} /> Ouvrir l'itinéraire GPS
                 </a>
               </div>
             )}
@@ -147,8 +151,8 @@ export default function LivreurCommandes() {
             {/* ── Historique des statuts ── */}
             {c.historiqueStatuts?.length > 0 && (
               <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--c-border)', background: 'var(--c-surface2)' }}>
-                <div style={{ color: 'var(--c-dim)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
-                  🕐 Historique
+                <div style={{ color: 'var(--c-dim)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Icon name="clock" size={12} /> Historique
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {c.historiqueStatuts.slice().reverse().map((h, i) => (
@@ -173,21 +177,22 @@ export default function LivreurCommandes() {
               {c.statut === 'validee' && (
                 <button
                   className="btn-primary"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   onClick={() => { updateMut.mutate({ id: c._id, s: 'en_livraison' }); setTrackingId(c._id) }}
                   disabled={updateMut.isPending}
                 >
-                  🚚 Démarrer la livraison
+                  <Icon name="truck" size={16} /> Démarrer la livraison
                 </button>
               )}
               {c.statut === 'en_livraison' && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button
                     className="btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                     onClick={() => { updateMut.mutate({ id: c._id, s: 'livree' }); setTrackingId(null) }}
                     disabled={updateMut.isPending}
                   >
-                    🎉 Marquer livrée
+                    <Icon name="check-simple" size={16} /> Marquer livrée
                   </button>
                   <button
                     onClick={() => setTrackingId(p => p === c._id ? null : c._id)}
@@ -197,9 +202,11 @@ export default function LivreurCommandes() {
                       border: `1px solid ${trackingId === c._id ? 'rgba(248,113,113,0.3)' : 'rgba(96,165,250,0.3)'}`,
                       background: trackingId === c._id ? 'rgba(248,113,113,0.1)' : 'rgba(96,165,250,0.1)',
                       color: trackingId === c._id ? '#f87171' : '#60a5fa',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                     }}
                   >
-                    {trackingId === c._id ? '⏹ Stop GPS' : '📍 Activer GPS'}
+                    <Icon name={trackingId === c._id ? 'x' : 'navigation'} size={14} />
+                    {trackingId === c._id ? 'Stop GPS' : 'Activer GPS'}
                   </button>
                 </div>
               )}

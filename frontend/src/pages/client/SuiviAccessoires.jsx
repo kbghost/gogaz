@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import Navbar from '../../components/ui/Navbar'
 import { commandeAccAPI } from '../../services/api'
 import { formatPrix, formatDate, formatDateRelative, statutLabel, getBadgeClass } from '../../utils/helpers'
+import Icon from '../../components/ui/Icons'
 
 const STEPS = ['en_attente','validee','en_livraison','livree']
 
@@ -48,13 +49,17 @@ export default function SuiviAccessoires() {
           <input type="text" style={{ flex: 1, padding: '13px 16px', borderRadius: '14px', border: '1px solid var(--c-border2)', background: 'var(--c-surface2)', color: 'var(--c-text)', fontFamily: 'var(--font-mono)', fontSize: '16px', outline: 'none' }}
             placeholder="Ex: ACC-260321-0001" value={searchNum}
             onChange={e => setSearchNum(e.target.value.toUpperCase())} />
-          <button type="submit" className="btn-primary" style={{ padding: '13px 20px' }}>🔍</button>
+          <button type="submit" className="btn-primary" style={{ padding: '13px 20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name="search" size={16} />
+          </button>
         </form>
 
         {isLoading && <div style={{ textAlign: 'center', padding: '40px', color: 'var(--c-muted)' }}>Recherche…</div>}
         {error && (
           <div style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>❌</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Icon name="x-circle" size={40} color="#f87171" />
+            </div>
             <p style={{ color: '#f87171', fontFamily: 'var(--font-body)' }}>Commande introuvable. Vérifiez le numéro.</p>
           </div>
         )}
@@ -115,7 +120,9 @@ export default function SuiviAccessoires() {
 
             {commande.livreur && (
               <div style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', borderRadius: '18px', padding: '18px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(249,124,10,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>🚚</div>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(249,124,10,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon name="truck" size={22} color="var(--c-brand)" />
+                </div>
                 <div>
                   <div style={{ color: 'var(--c-muted)', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>Livreur assigné</div>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--c-text)' }}>{commande.livreur.nom}</div>

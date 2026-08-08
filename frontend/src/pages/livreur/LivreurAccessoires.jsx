@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandeAccAPI } from '../../services/api'
 import { formatPrix, formatDateRelative, getBadgeClass, statutLabel } from '../../utils/helpers'
 import { useSocket } from '../../context/SocketContext'
+import Icon from '../../components/ui/Icons'
 import toast from 'react-hot-toast'
 
 export default function LivreurAccessoires() {
@@ -36,23 +37,23 @@ export default function LivreurAccessoires() {
   }, [trackingId])
 
   const TABS = [
-    { val: 'en_attente', label: '⏳ En attente' },
-    { val: 'validee',    label: '✅ Validées' },
-    { val: 'en_livraison', label: '🚚 En cours' },
-    { val: 'livree',     label: '🎉 Livrées' },
+    { val: 'en_attente',   label: 'En attente', icon: 'clock' },
+    { val: 'validee',      label: 'Validées',   icon: 'check-simple' },
+    { val: 'en_livraison', label: 'En cours',   icon: 'truck' },
+    { val: 'livree',       label: 'Livrées',    icon: 'package' },
   ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(1.3rem,4vw,1.8rem)', color: 'var(--c-text)', letterSpacing: '-0.02em' }}>
-        🔧 Commandes accessoires
+      <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(1.3rem,4vw,1.8rem)', color: 'var(--c-text)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <Icon name="wrench" size={22} color="var(--c-brand)" /> Commandes accessoires
       </h1>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
         {TABS.map(t => (
-          <button key={t.val} onClick={() => setStatut(t.val)} style={{ flexShrink: 0, padding: '8px 16px', borderRadius: '99px', border: '1px solid var(--c-border)', background: statut === t.val ? 'var(--c-brand)' : 'var(--c-surface2)', color: statut === t.val ? '#fff' : 'var(--c-muted)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', boxShadow: statut === t.val ? '0 0 16px rgba(249,124,10,0.3)' : 'none' }}>
-            {t.label}
+          <button key={t.val} onClick={() => setStatut(t.val)} style={{ flexShrink: 0, padding: '8px 16px', borderRadius: '99px', border: '1px solid var(--c-border)', background: statut === t.val ? 'var(--c-brand)' : 'var(--c-surface2)', color: statut === t.val ? '#fff' : 'var(--c-muted)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', boxShadow: statut === t.val ? '0 0 16px rgba(249,124,10,0.3)' : 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name={t.icon} size={14} /> {t.label}
           </button>
         ))}
       </div>
@@ -60,7 +61,9 @@ export default function LivreurAccessoires() {
       {isLoading && <div style={{ textAlign: 'center', padding: '40px', color: 'var(--c-muted)' }}>Chargement…</div>}
       {!isLoading && commandes.length === 0 && (
         <div style={{ textAlign: 'center', padding: '60px', background: 'var(--c-surface)', borderRadius: '18px', border: '1px solid var(--c-border)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '14px' }}>📭</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+            <Icon name="package" size={48} color="var(--c-dim)" />
+          </div>
           <p style={{ color: 'var(--c-muted)', fontFamily: 'var(--font-body)' }}>Aucune commande dans cette catégorie.</p>
         </div>
       )}
@@ -86,17 +89,23 @@ export default function LivreurAccessoires() {
               <div style={{ color: 'var(--c-muted)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Articles ({c.items?.length})</div>
               {c.items?.map((item, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
-                  <span style={{ color: 'var(--c-muted)' }}>🔧 {item.nom} ×{item.quantite}</span>
+                  <span style={{ color: 'var(--c-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Icon name="wrench" size={12} /> {item.nom} ×{item.quantite}
+                  </span>
                   <span style={{ color: 'var(--c-text)', fontWeight: 600 }}>{formatPrix(item.prix * item.quantite)}</span>
                 </div>
               ))}
               {c.adresseLivraison && (
-                <div style={{ color: 'var(--c-muted)', fontSize: '0.78rem', marginTop: '4px' }}>📍 {c.adresseLivraison}</div>
+                <div style={{ color: 'var(--c-muted)', fontSize: '0.78rem', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Icon name="map-pin" size={12} /> {c.adresseLivraison}
+                </div>
               )}
               {c.description && (
-                <div style={{ color: 'var(--c-dim)', fontSize: '0.75rem', fontStyle: 'italic' }}>💬 {c.description}</div>
+                <div style={{ color: 'var(--c-dim)', fontSize: '0.75rem', fontStyle: 'italic' }}>{c.description}</div>
               )}
-              <div style={{ color: 'var(--c-dim)', fontSize: '0.72rem', marginTop: '2px' }}>🕐 {formatDateRelative(c.createdAt)}</div>
+              <div style={{ color: 'var(--c-dim)', fontSize: '0.72rem', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Icon name="clock" size={12} /> {formatDateRelative(c.createdAt)}
+              </div>
             </div>
 
             {/* Actions */}
@@ -105,18 +114,19 @@ export default function LivreurAccessoires() {
                 <button onClick={() => { updateMut.mutate({ id: c._id, s: 'en_livraison' }); setTrackingId(c._id) }}
                   disabled={updateMut.isPending}
                   style={{ width: '100%', padding: '13px', borderRadius: '14px', border: '1px solid rgba(249,124,10,0.3)', background: 'rgba(249,124,10,0.08)', color: 'var(--c-brand)', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  🚚 Démarrer la livraison
+                  <Icon name="truck" size={16} /> Démarrer la livraison
                 </button>
               )}
               {c.statut === 'en_livraison' && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button onClick={() => updateMut.mutate({ id: c._id, s: 'livree' })} disabled={updateMut.isPending}
-                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.08)', color: '#22c55e', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    🎉 Marquer livrée
+                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.08)', color: '#22c55e', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Icon name="check-simple" size={14} /> Marquer livrée
                   </button>
                   <button onClick={() => setTrackingId(prev => prev === c._id ? null : c._id)}
-                    style={{ padding: '12px', borderRadius: '12px', border: `1px solid ${trackingId === c._id ? 'rgba(239,68,68,0.3)' : 'rgba(59,130,246,0.3)'}`, background: trackingId === c._id ? 'rgba(239,68,68,0.08)' : 'rgba(59,130,246,0.08)', color: trackingId === c._id ? '#ef4444' : '#3b82f6', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                    {trackingId === c._id ? '⏹ Stop GPS' : '📍 GPS'}
+                    style={{ padding: '12px', borderRadius: '12px', border: `1px solid ${trackingId === c._id ? 'rgba(239,68,68,0.3)' : 'rgba(59,130,246,0.3)'}`, background: trackingId === c._id ? 'rgba(239,68,68,0.08)' : 'rgba(59,130,246,0.08)', color: trackingId === c._id ? '#ef4444' : '#3b82f6', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Icon name={trackingId === c._id ? 'x' : 'navigation'} size={14} />
+                    {trackingId === c._id ? 'Stop GPS' : 'GPS'}
                   </button>
                 </div>
               )}
@@ -124,7 +134,7 @@ export default function LivreurAccessoires() {
                 <a href={`https://www.google.com/maps/dir/?api=1&destination=${c.localisation.lat},${c.localisation.lng}`}
                   target="_blank" rel="noreferrer"
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px', borderRadius: '12px', border: '1px solid var(--c-border2)', background: 'var(--c-surface2)', color: 'var(--c-muted)', textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem' }}>
-                  🗺️ Ouvrir l'itinéraire
+                  <Icon name="navigation" size={14} /> Ouvrir l'itinéraire
                 </a>
               )}
             </div>
