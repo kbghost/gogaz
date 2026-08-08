@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 
 const INFOS = [
   { icon: '📞', label: 'Téléphone', val: '+229 97 00 00 00', sub: 'Disponible 24h/7j' },
-  { icon: '📧', label: 'Email', val: 'contact@gazlivraison.bj', sub: 'Réponse sous 24h' },
+  { icon: '📧', label: 'Email', val: 'contact@gogaz.bj', sub: 'Réponse sous 24h' },
   { icon: '📍', label: 'Zone couverte', val: 'Cotonou & environs', sub: 'Livraison rapide' },
 ]
 

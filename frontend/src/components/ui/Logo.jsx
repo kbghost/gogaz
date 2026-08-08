@@ -4,11 +4,11 @@ export default function Logo({ height = 50, showText = true }) {
       
       {/* Votre Image à la place du SVG */}
       <img 
-        src="/logo.png"  // <-- Changez ici le nom si votre fichier s'appelle différemment
-        alt="Logo GazLivraison" 
+        src="/logo.png"
+        alt="Logo GoGaz" 
         style={{ 
           height: `${height}px`, 
-          width: '50px',
+          width: 'auto',
           objectFit: 'contain' 
         }} 
       />
@@ -22,7 +22,7 @@ export default function Logo({ height = 50, showText = true }) {
             letterSpacing: '-0.03em',
             color: 'var(--c-text)',
           }}>
-            
+            Go<span style={{ color: 'var(--c-brand)' }}>Gaz</span>
           </span>
           <span style={{
             fontFamily: 'var(--font-mono)',

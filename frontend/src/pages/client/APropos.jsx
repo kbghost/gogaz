@@ -29,7 +29,7 @@ export default function APropos() {
             Né au Bénin,<br />pour les Béninois
           </h1>
           <p style={{ color: 'var(--c-muted)', fontFamily: 'var(--font-body)', fontSize: '1rem', lineHeight: 1.8, maxWidth: '560px', margin: '0 auto' }}>
-            GazLivraison est né d'un constat simple : trop de familles béninoises se retrouvaient en panne de gaz au mauvais moment. Nous avons créé un service de livraison rapide, fiable et transparent pour résoudre ce problème une fois pour toutes.
+            GoGaz est né d'un constat simple : trop de familles béninoises se retrouvaient en panne de gaz au mauvais moment. Nous avons créé un service de livraison rapide, fiable et transparent pour résoudre ce problème une fois pour toutes.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function APropos() {
         {/* CTA */}
         <div style={{ textAlign: 'center' }}>
           <Link to="/commander" className="btn-primary glow" style={{ fontSize: '1rem', padding: '16px 36px' }}>
-            Essayer GazLivraison →
+            Essayer GoGaz →
           </Link>
         </div>
       </div>

@@ -34,7 +34,7 @@ export default function Register() {
             <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #f97c0a, #ff5500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', boxShadow: '0 0 28px rgba(249,124,10,0.4)' }}>
               <Icon name="fire" size={20} color="#fff" />
             </div>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--c-text)' }}>Gaz<span style={{ color: '#f97c0a' }}>Livraison</span></span>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--c-text)' }}>Go<span style={{ color: 'var(--c-brand)' }}>Gaz</span></span>
           </Link>
           <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.6rem', color: 'var(--c-text)', letterSpacing: '-0.02em', marginBottom: '6px' }}>Créer un compte</h1>
           <p style={{ color: 'var(--c-muted)', fontSize: '0.9rem', fontFamily: 'var(--font-body)' }}>Rejoignez GoGaz Bénin</p>
