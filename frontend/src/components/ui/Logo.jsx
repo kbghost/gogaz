@@ -20,7 +20,7 @@ export default function Logo({ height = 50, showText = true }) {
             fontWeight: 800,
             fontSize: `${height * 0.55}px`,
             letterSpacing: '-0.03em',
-            color: '#011107',
+            color: '#05441d',
           }}>
             Go<span style={{ color: 'var(--c-brand)' }}>Gaz</span>
           </span>
