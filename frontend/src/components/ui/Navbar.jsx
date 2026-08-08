@@ -23,7 +23,7 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', label: 'Accueil', end: true },
     { to: '/commander', label: 'Commander du gaz' },
-    { to: '/accessoires', label: '🔧 Accessoires' },
+    { to: '/accessoires', label: 'Accessoires' },
     { to: '/tarifs', label: 'Tarifs' },
     { to: '/suivi', label: 'Suivi' },
     { to: '/a-propos', label: 'À propos' },

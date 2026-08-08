@@ -52,7 +52,7 @@ export default function Tarifs() {
             Des prix clairs,<br/>
             <span style={{ background:'linear-gradient(135deg,#f97c0a,#ff4500)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>zéro surprise</span>
           </h1>
-          <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'1rem', maxWidth:'480px', lineHeight:1.7' }}>
+          <p style={{ color:'var(--c-muted)', fontFamily:'var(--font-body)', fontSize:'1rem', maxWidth:'480px', lineHeight:1.7 }}>
             Paiement uniquement à la livraison. Le prix affiché est le prix final.
           </p>
           {/* Badges de confiance */}
