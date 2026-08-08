@@ -338,10 +338,11 @@ export default function CommanderAccessoires() {
       {/* ── BARRE PANIER FLOTTANTE (mobile) — visible sur step 1 ── */}
       {step === 1 && panierCount > 0 && (
         <div style={{
-          position:'fixed', bottom:0, left:0, right:0, zIndex:100,
+          position:'sticky', bottom:'calc(68px + env(safe-area-inset-bottom, 0px))', left:0, right:0, zIndex:110,
           padding:'12px 16px', paddingBottom:'calc(12px + env(safe-area-inset-bottom, 0px))',
           background:'rgba(8,8,7,0.97)', backdropFilter:'blur(20px)',
           borderTop:'1px solid var(--c-border)',
+          marginTop:'18px',
         }}>
           <button
             className="btn-primary"
