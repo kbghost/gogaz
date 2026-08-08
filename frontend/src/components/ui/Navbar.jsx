@@ -43,7 +43,7 @@ export default function Navbar() {
   return (
     <>
       <nav style={navStyle}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', rowGap: '10px' }}>
 
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
@@ -51,7 +51,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <div style={{ display: 'none', alignItems: 'center', gap: '2px' }} className="nav-desktop">
+          <div style={{ display: 'none', alignItems: 'center', gap: '12px', flex: 1, justifyContent: 'center', flexWrap: 'wrap', minWidth: 0, overflow: 'hidden' }} className="nav-desktop">
             {navLinks.map(({ to, label, end }) => (
               <NavLink key={to} to={to} end={end} style={({ isActive }) => ({
                 padding: '7px 13px', borderRadius: '8px', textDecoration: 'none',
@@ -66,7 +66,7 @@ export default function Navbar() {
           </div>
 
           {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div className="nav-desktop" style={{ display: 'none', alignItems: 'center', gap: '8px' }}>
               <ThemeToggle size={36} />
             </div>
@@ -108,7 +108,7 @@ export default function Navbar() {
       {open && <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />}
 
       {/* Mobile drawer */}
-      <div style={{ position: 'fixed', top: '64px', left: 0, right: 0, zIndex: 100, background: 'rgba(17,17,16,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid var(--c-border)', transform: open ? 'translateY(0)' : 'translateY(-120%)', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }} className="nav-mobile">
+      <div style={{ position: 'fixed', top: '64px', left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(17,17,16,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid var(--c-border)', transform: open ? 'translateY(0)' : 'translateY(-120%)', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} className="nav-mobile">
         <div style={{ padding: '14px 16px 20px' }}>
           {user && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', marginBottom: '12px', background: 'var(--c-surface2)', borderRadius: '14px', border: '1px solid var(--c-border)' }}>
@@ -147,7 +147,7 @@ export default function Navbar() {
 
       <style>{`
         @media (min-width: 900px) { .nav-mobile { display: none !important; } .nav-desktop { display: flex !important; } }
-        @media (max-width: 899px) { .hide-xs { display: none; } }
+        @media (max-width: 899px) { .hide-xs { display: none; } .nav-desktop { display: none !important; } .nav-mobile { display: block !important; } }
       `}</style>
     </>
   )
