@@ -91,23 +91,44 @@ export default function Navbar() {
                   <Link to="/login"    className="btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem' }}>Connexion</Link>
                   <Link to="/commander" className="btn-primary"  style={{ padding: '9px 16px', fontSize: '0.85rem', display:'inline-flex', alignItems:'center', gap:'6px' }}>Commander <Icon name="arrow-right" size={14} /></Link>
                 </div>
-
-                {/* Hamburger */}
-                <button onClick={() => setOpen(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
-                  {[0,1,2].map(i => (
-                    <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '18px', transform: open ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
-                  ))}
-                </button>
               </>
             )}
+
+            {/* Hamburger (always shown on mobile) */}
+            <button onClick={() => setOpen(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '10px', background: open ? 'var(--c-border)' : 'var(--c-surface2)', border: '1px solid var(--c-border2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer', transition: 'all 0.15s' }} className="nav-mobile" aria-label="Menu">
+              {[0,1,2].map(i => (
+                <span key={i} style={{ display: 'block', height: '2px', borderRadius: '2px', background: 'var(--c-text)', transition: 'all 0.25s', width: i===1&&open ? '0' : '18px', transform: open ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'none') : 'none', opacity: i===1&&open ? 0 : 1 }} />
+              ))}
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Backdrop */}
-      {open && <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />}
+      {/* Bottom navigation for mobile */}
+      <div className="bottom-nav" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 120, display: 'none', justifyContent: 'center', padding: '8px 12px', boxSizing: 'border-box' }}>
+        <div style={{ width: '100%', maxWidth: '900px', background: 'rgba(17,17,16,0.98)', border: '1px solid var(--c-border)', borderRadius: '18px', display: 'flex', justifyContent: 'space-between', gap: '6px', padding: '10px' }}>
+          {[
+            { to: '/', label: 'Accueil', icon: 'home' },
+            { to: '/commander', label: 'Gaz', icon: 'cart' },
+            { to: '/accessoires', label: 'Accessoires', icon: 'wrench' },
+            { to: '/suivi', label: 'Suivi', icon: 'map-pin' },
+          ].map(item => (
+            <Link key={item.to} to={item.to} style={bottomLinkStyle} onClick={() => setOpen(false)}>
+              <Icon name={item.icon} size={18} />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+          <Link to={user ? (user.role === 'admin' ? '/admin' : user.role === 'livreur' ? '/livreur' : '/mes-commandes') : '/login'} style={bottomLinkStyle} onClick={() => setOpen(false)}>
+            <Icon name="user" size={18} />
+            <span>Compte</span>
+          </Link>
+        </div>
+      </div>
 
-      {/* Mobile drawer */}
+      <style>{`
+        @media (min-width: 900px) { .nav-mobile { display: none !important; } .nav-desktop { display: flex !important; } .bottom-nav { display: none !important; } }
+        @media (max-width: 899px) { .hide-xs { display: none; } .bottom-nav { display: flex !important; } }
+      `}</style>
       <div style={{ position: 'fixed', top: '64px', left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(17,17,16,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid var(--c-border)', transform: open ? 'translateY(0)' : 'translateY(-120%)', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} className="nav-mobile">
         <div style={{ padding: '14px 16px 20px' }}>
           {user && (
@@ -154,4 +175,5 @@ export default function Navbar() {
 }
 
 const linkStyle = { color: 'var(--c-brand)', fontSize: '0.85rem', fontFamily: 'var(--font-display)', fontWeight: 600, textDecoration: 'none' }
+const bottomLinkStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', flex: 1, textDecoration: 'none', color: 'var(--c-muted)', fontSize: '0.75rem', fontFamily: 'var(--font-display)', fontWeight: 600 }
 const mobileLink = { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', borderRadius: '12px', textDecoration: 'none', color: 'var(--c-muted)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: '2px' }
