@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandeAPI, commandeAccAPI, userAPI } from '../../services/api'
 import { formatPrix, formatDateRelative, getBadgeClass, statutLabel } from '../../utils/helpers'
+import Icon from '../../components/ui/Icons'
 import toast from 'react-hot-toast'
 
 const STATUTS = ['', 'en_attente', 'validee', 'en_livraison', 'livree', 'annulee']
