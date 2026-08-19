@@ -102,7 +102,7 @@ export default function Icon({ name, size = 18, color = 'currentColor', classNam
     case 'home': return <LuHouse {...props} />
     case 'dashboard': return <LuLayoutDashboard {...props} />
     case 'chart':
-    case 'bar-chart': return <LuBarChart3 {...props} />
+    case 'bar-chart': return <LuChartBar {...props} />
     case 'image':
     case 'slider': return <LuImage {...props} />
     case 'fuel':
