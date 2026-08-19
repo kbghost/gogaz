@@ -111,7 +111,7 @@ export default function AdminCommandes() {
       <div style={S.tabs}>
         {STATUTS.map(s => (
           <button key={s||'all'} onClick={() => setStatut(s)} style={S.tab(statut===s)}>
-            {s ? `${statutLabel[s]?.icon} ${statutLabel[s]?.label}` : 'Toutes'}
+            {s ? <><Icon name={statutLabel[s]?.icon} size={14} /> {statutLabel[s]?.label}</> : 'Toutes'}
           </button>
         ))}
       </div>
