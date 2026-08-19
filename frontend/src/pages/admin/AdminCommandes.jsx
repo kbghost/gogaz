@@ -147,7 +147,16 @@ export default function AdminCommandes() {
                       <div style={{ fontFamily:'var(--font-mono)', color:'var(--c-muted)', fontSize:'0.72rem' }}>{c.telephoneClient}</div>
                     </td>
                     <td style={S.tCell}>
-                      {tab==='gaz' ? `${c.marque} ${c.poids}kg ×${c.quantite}` : `${c.items?.length || 0} article(s)`}
+                      {tab==='gaz' ? `${c.marque} ${c.poids}kg ×${c.quantite}` : (
+                        <div style={{ display:'flex', flexDirection:'column', gap:'3px' }}>
+                          {c.items?.slice(0, 2).map(item => (
+                            <span key={`${item.nom}-${item.quantite}`} style={{ color:'var(--c-text)', fontSize:'0.78rem' }}>
+                              {item.nom} ×{item.quantite}
+                            </span>
+                          ))}
+                          {(c.items?.length || 0) > 2 && <span style={{ color:'var(--c-muted)', fontSize:'0.7rem' }}>+{c.items.length - 2} autre(s)</span>}
+                        </div>
+                      )}
                     </td>
                     <td style={S.tCell}><span style={{ fontFamily:'var(--font-display)', fontWeight:800, color:'var(--c-brand)', fontSize:'0.9rem' }}>{formatPrix(c.prixTotal)}</span></td>
                     <td style={S.tCell}><span className={getBadgeClass(c.statut)}>{statutLabel[c.statut]?.label}</span></td>
@@ -177,6 +186,32 @@ export default function AdminCommandes() {
                <p><strong>Total:</strong> {formatPrix(sel.prixTotal)}</p>
                {sel.adresseLivraison && <p><strong>Adresse:</strong> {sel.adresseLivraison}</p>}
             </div>
+
+            {tab === 'acc' && (
+              <div style={{ background:'var(--c-surface2)', borderRadius:'16px', padding:'16px', marginBottom:'12px' }}>
+                <div style={{ color:'var(--c-muted)', fontFamily:'var(--font-mono)', fontSize:'0.68rem', textTransform:'uppercase', marginBottom:'10px' }}>
+                  Articles commandés
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'9px' }}>
+                  {(sel.items || []).map(item => (
+                    <div key={`${item.nom}-${item.quantite}`} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', fontSize:'0.82rem' }}>
+                      <div style={{ minWidth:0 }}>
+                        <div style={{ color:'var(--c-text)', fontWeight:700 }}>{item.nom}</div>
+                        <div style={{ color:'var(--c-muted)', fontSize:'0.72rem' }}>{formatPrix(item.prix)} × {item.quantite}</div>
+                      </div>
+                      <span style={{ color:'var(--c-brand)', fontWeight:800, whiteSpace:'nowrap' }}>
+                        {formatPrix(item.prix * item.quantite)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {sel.description && (
+                  <div style={{ borderTop:'1px solid var(--c-border)', marginTop:'12px', paddingTop:'10px', color:'var(--c-muted)', fontSize:'0.78rem' }}>
+                    <strong style={{ color:'var(--c-text)' }}>Note:</strong> {sel.description}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* SECTION ITINÉRAIRE GPS */}
             {sel.localisation?.lat && (
